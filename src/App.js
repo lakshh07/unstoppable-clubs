@@ -11,9 +11,14 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Dashboard from "./components/Dashboard";
 
+// const { default: Resolution } = require('@unstoppabledomains/resolution');
+import Resolution from '@unstoppabledomains/resolution/build/Resolution';
+
 function App() {
   const [currentAccount, setCurrentAccount] = useState("0x0000");
   const [chainId, setChainId] = useState();
+
+  const resolution = new Resolution();
 
   const getCurrentAccount = async () => {
     const accounts = await window.ethereum.request({
@@ -21,6 +26,16 @@ function App() {
     });
     setCurrentAccount(ethers.utils.getAddress(accounts[0]));
   };
+
+  function resolve() {
+    resolution.allRecords('udtestdev-dns-ipfs-redirect.crypto').then((records) => console.log(records)).catch(console.error);
+  }
+  function resolveto(domain, currency) {
+    resolution
+      .addr(domain, currency)
+      .then((address) => console.log(domain, 'resolves to', address))
+      .catch(console.error);
+  }
 
   useEffect(() => {
     if (window.ethereum && currentAccount) {
@@ -36,6 +51,8 @@ function App() {
         window.location.reload();
       });
     }
+    resolve();
+    resolveto("udtestdev-carry.crypto","ETH");
   }, [currentAccount]);
 
   return (
