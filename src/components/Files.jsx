@@ -8,6 +8,7 @@ import {
   Center,
   Image,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const fileList = [
   {
@@ -26,7 +27,7 @@ const fileList = [
   },
 ];
 
-export default function SocialProfileSimple({ contractProvider }) {
+export default function SocialProfileSimple({ userName, contractProvider }) {
   const [usersArray, setUsersArray] = useState([]);
   const array = [];
   React.useEffect(() => {
@@ -92,6 +93,7 @@ export default function SocialProfileSimple({ contractProvider }) {
                       {list.description}
                     </Text>
                   </Stack>
+
                   <Button
                     w={"full"}
                     mt={5}

@@ -222,7 +222,7 @@ export default function Signup({ isOpen, onClose, contractSigner }) {
           </ModalBody>
           <ModalFooter>
             <Button
-              bg="gray.900"
+              bg="blue.900"
               color={"white"}
               _hover={{
                 transform: "translateY(-2px)",

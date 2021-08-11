@@ -8,14 +8,14 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ethers } from "ethers";
 import Dashboard from "./components/Dashboard";
+import Hero from "./components/Hero";
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState("0x0000");
   const [chainId, setChainId] = useState();
-
-  const resolution = new Resolution();
 
   const getCurrentAccount = async () => {
     const accounts = await window.ethereum.request({
@@ -42,7 +42,8 @@ function App() {
 
   return (
     <ChakraProvider>
-      {currentAccount === undefined ? (
+      <Router>
+        {/* {currentAccount === undefined ? (
         window.location.reload()
       ) : window.ethereum === undefined ? (
         <Alert status="error" justifyContent="center">
@@ -76,8 +77,20 @@ function App() {
             </Alert>
           )}
         </>
-      )}
-      <Dashboard currentAccount={currentAccount} />
+      )} */}
+        <Route exact path="/">
+          <Hero />
+        </Route>
+        <Route exact path="/dashboard">
+          <Dashboard currentAccount={currentAccount} />
+        </Route>
+        <Route exact path="/users/files">
+          <Dashboard currentAccount={currentAccount} />
+        </Route>
+        <Route exact path="/users">
+          <Dashboard currentAccount={currentAccount} />
+        </Route>
+      </Router>
     </ChakraProvider>
   );
 }
