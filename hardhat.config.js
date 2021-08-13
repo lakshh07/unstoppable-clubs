@@ -15,6 +15,9 @@ module.exports = {
     artifacts: "./src/artifacts",
   },
   networks: {
+    ganache: {
+      url: "http://127.0.0.1:7545",
+    },
     hardhat: {
       chainId: 137,
       forking: {

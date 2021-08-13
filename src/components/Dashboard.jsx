@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useParams,
+} from "react-router-dom";
 import {
   Flex,
   Heading,
@@ -18,19 +23,18 @@ import { BsFiles } from "react-icons/bs";
 import svgAvatarGenerator from "../utils/avatar";
 import Usercard from "./Usercard";
 import Files from "./Files";
-import CreateUser from "./Signup";
+import CreateUser from "./CreateClub";
 import CreateFile from "./Createfile";
 
-export default function Dashboard({ currentAccount }) {
+export default function Dashboard({ testEncryptedUpload, currentAccount }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
+  let { user } = useParams();
 
   useEffect(() => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
-  }, [currentAccount]);
-
-  const userName = "carry";
+  }, [currentAccount, user]);
 
   return (
     <Flex
@@ -72,7 +76,7 @@ export default function Dashboard({ currentAccount }) {
               justifyContent="center"
             >
               {" "}
-              <Route exact path="/users">
+              <Route exact path="/clubs">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
                   <Icon
                     as={FiUsers}
@@ -82,13 +86,13 @@ export default function Dashboard({ currentAccount }) {
                   />
                   <Text
                     display={["flex", "flex", "none", "flex", "flex"]}
-                    className="active"
+                    color="gray.900"
                   >
                     Clubs
                   </Text>
                 </Flex>
               </Route>
-              <Route exact path="./dashboard">
+              <Route exact path="/dashboard">
                 <div>
                   <Button
                     align="center"
@@ -102,13 +106,13 @@ export default function Dashboard({ currentAccount }) {
                     Create New File
                   </Button>
                   <CreateFile
+                    testEncryptedUpload={testEncryptedUpload}
                     isOpen={isOpen}
-                    //   contractSigner={contractSigner}
                     onClose={onClose}
                   />
                 </div>
               </Route>
-              <Route exact path="/users/files">
+              <Route exact path="/:user/files">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
                   <Icon
                     as={BsFiles}
@@ -118,7 +122,6 @@ export default function Dashboard({ currentAccount }) {
                   />
                   <Text
                     display={["flex", "flex", "none", "flex", "flex"]}
-                    className="active"
                     color="gray.900"
                   >
                     Files
@@ -146,7 +149,7 @@ export default function Dashboard({ currentAccount }) {
 
       <Flex
         w={["100%", "100%", "95%", "85%"]}
-        p="3%"
+        p="2%"
         flexDir="column"
         overflow="auto"
         minH="100vh"
@@ -156,22 +159,22 @@ export default function Dashboard({ currentAccount }) {
             <Route exact path="/dashboard">
               Your Files
             </Route>
-            <Route exact path="/users">
+            <Route exact path="/clubs">
               Your Clubs
             </Route>
-            <Route exact path="/users/files">
-              User's Files
+            <Route exact path="/:user/files">
+              {user}'s Files
             </Route>
           </Heading>
         </Flex>
         <Switch>
-          <Route exact path="/users">
+          <Route exact path="/clubs">
             <Usercard />
           </Route>
-          <Route exact path="/users/files">
+          <Route exact path="/:user/files">
             {/* */}
-            <Flex align="flex-start">
-              <Files userName={userName} />
+            <Flex>
+              <Files />
             </Flex>
           </Route>
         </Switch>

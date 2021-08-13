@@ -21,11 +21,15 @@ import {
   Badge,
   Icon,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { AiFillFileAdd } from "react-icons/ai";
+import Checker from "./Checker";
 
-export default function CreateFile({ isOpen, onClose, contractSigner }) {
+export default function CreateFile({ isOpen, onClose, testEncryptedUpload }) {
   const toast = useToast();
+  const [transactionLoading, setTransactionLoading] = useState(false);
+
   const [{ name, file }, setFile] = useState({
     name: <Icon as={AiFillFileAdd} />,
     file: "",
@@ -35,37 +39,47 @@ export default function CreateFile({ isOpen, onClose, contractSigner }) {
     description: "",
   });
 
+  const changeLoading = () => {
+    setTransactionLoading(true);
+  };
+
   const createFile = async () => {
-    const transaction = await contractSigner.upload(
-      // newFile.name,
-      "txt",
-      newFile.description,
-      newFile.title,
-      "asfg"
-    );
-    const { status } = await transaction.wait();
-    {
-      status === 1
-        ? toast({
-            position: "top-right",
-            title: "Transaction Successfull!",
-            description: `New File is uploaded`,
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          })
-        : toast({
-            position: "top-right",
-            title: "Transaction Failed!",
-            description: "Unable to create file.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
+    changeLoading();
+    const uploadStatus = testEncryptedUpload();
+
+    // const transaction = await contractSigner.upload(
+    //   // newFile.name,
+    //   "txt",
+    //   newFile.description,
+    //   newFile.title,
+    //   "asfg"
+    // );
+    if (uploadStatus === 1) {
+      setTransactionLoading(false);
+      toast({
+        position: "top-right",
+        title: "Transaction Successfull!",
+        description: `New File is uploaded`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      setTransactionLoading(false);
+      toast({
+        position: "top-right",
+        title: "Transaction Failed!",
+        description: "Unable to create file.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
-    setInterval(() => {
-      window.location.reload();
-    }, 5000);
+    setNewFile({ title: "", description: "" });
+    setFile({ name: <Icon as={AiFillFileAdd} />, file: "" });
+    // setInterval(() => {
+    //   window.location.reload();
+    // }, 5000);
   };
 
   const updateField = (e) => {
@@ -74,7 +88,6 @@ export default function CreateFile({ isOpen, onClose, contractSigner }) {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(newFile.title);
 
   const handleFile = (e) => {
     if (e.target.files[0]) {
@@ -86,6 +99,7 @@ export default function CreateFile({ isOpen, onClose, contractSigner }) {
   };
   return (
     <>
+      <Checker transactionLoading={transactionLoading} />
       <Modal
         closeOnOverlayClick={false}
         isOpen={isOpen}
@@ -196,13 +210,16 @@ export default function CreateFile({ isOpen, onClose, contractSigner }) {
           </ModalBody>
           <ModalFooter>
             <Button
+              onClick={(event) => {
+                onClose();
+                createFile();
+              }}
               bg="blue.900"
               color={"white"}
               _hover={{
                 transform: "translateY(-2px)",
                 boxShadow: "lg",
               }}
-              onClick={createFile}
               mr={3}
             >
               Upload

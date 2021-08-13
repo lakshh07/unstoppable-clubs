@@ -44,12 +44,12 @@ body {
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  /* justify-content: center; */
+  justify-content: space-evenly;
   /* margin-left: -8px; */
   /* margin-right: -3px; */
 }
 .cards__item {
-  flex-basis: 25%;
+  flex-basis: 20%;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -120,20 +120,4 @@ a {
 
 .sidebar-items p {
   margin-left: 1em;
-}
-
-.sidebar-items:hover svg {
-  color: #b57295;
-}
-
-.sidebar-items:hover p {
-  color: #fff;
-}
-
-.active {
-  color: #fff;
-}
-
-.active-icon {
-  color: #b57295 !important;
 }

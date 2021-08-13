@@ -9,7 +9,7 @@ import {
   createIcon,
 } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
-import React, { useState } from "react";
+import React from "react";
 import { Link, Route } from "react-router-dom";
 //   import { ethers } from "ethers";
 
@@ -59,66 +59,15 @@ const userList = [
     description: "Model",
     amount: "10",
   },
-  {
-    id: "5",
-    profileImg:
-      "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-    name: "Lindsey James",
-    description: "Musician, PM for work inquires or me in your posts",
-    amount: "5",
-  },
-  {
-    id: "6",
-    profileImg:
-      "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-    name: "Soraya Naomi",
-    description: "Model",
-    amount: "10",
-  },
-  {
-    id: "7",
-    profileImg:
-      "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-    name: "Lindsey James",
-    description: "Musician, PM for work inquires or me in your posts",
-    amount: "5",
-  },
-  {
-    id: "8",
-    profileImg:
-      "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-    name: "Soraya Naomi",
-    description: "Model",
-    amount: "10",
-  },
 ];
 
-function SocialProfileSimple({ contractProvider, accountsss }) {
-  const [usersArray, setUsersArray] = useState([]);
-  const array = [];
-  React.useEffect(() => {
-    async function init() {
-      for (var i = 0; i < accountsss.length; i++) {
-        const userList = await contractProvider.creators(i + 1);
-        array.push({
-          id: userList.creatorId.toString(),
-          name: userList.creatorName,
-          description: userList.creatorDescription,
-          amount: userList.creatorPrice.toString(),
-        });
-      }
-      setUsersArray(array);
-    }
-    //   init();
-  }, [accountsss]);
-
+function UserCard({}) {
   return (
     <div className="cards">
       {userList.map((list) => {
         return (
           <div className="cards__item" key={list.id}>
             <Box
-              // zIndex="2"
               w={"300px"}
               bg="whiteAlpha.800"
               boxShadow={
@@ -152,8 +101,7 @@ function SocialProfileSimple({ contractProvider, accountsss }) {
               >
                 <Route exact path="/">
                   <Text fontSize={"md"} fontFamily={"Caveat"}>
-                    Only at 10 Matic/Week
-                    {/* Only at {ethers.utils.formatEther(list.amount)} Matic/Week */}
+                    Only at {list.amount} Matic/Week
                   </Text>
                   <Button
                     fontSize={"sm"}
@@ -169,7 +117,7 @@ function SocialProfileSimple({ contractProvider, accountsss }) {
                     Subscribe
                   </Button>
                 </Route>
-                <Route exact path="/users">
+                <Route exact path="/clubs">
                   <Link to={`/${list.name}/files`}>
                     <Button
                       fontSize={"sm"}
@@ -205,4 +153,4 @@ function SocialProfileSimple({ contractProvider, accountsss }) {
   );
 }
 
-export default SocialProfileSimple;
+export default UserCard;

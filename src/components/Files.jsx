@@ -27,29 +27,7 @@ const fileList = [
   },
 ];
 
-export default function SocialProfileSimple({ userName, contractProvider }) {
-  const [usersArray, setUsersArray] = useState([]);
-  const array = [];
-  React.useEffect(() => {
-    async function init() {
-      const account = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const numFiles = await contractProvider.filesNum(account[0]);
-      for (var i = 0; i < numFiles.toString(); i++) {
-        const usersFile = await contractProvider.files(account[0], i);
-        array.push({
-          id: usersFile.fileId.toString(),
-          title: usersFile.fileTitle,
-          description: usersFile.fileDescription,
-          name: usersFile.fileName,
-        });
-      }
-      setUsersArray(array);
-    }
-    // init();
-  }, []);
-
+export default function SocialProfileSimple({}) {
   return (
     <div className="cards">
       {fileList.map((list) => {

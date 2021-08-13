@@ -22,9 +22,9 @@ import svgAvatarGenerator from "../utils/avatar";
 import { FcAssistant, FcDonate, FcInTransit } from "react-icons/fc";
 import image from "../images/20945479.jpg";
 import Usercard from "./Usercard";
-import CreateUser from "./Signup";
+import CreateUser from "./CreateClub";
 
-export default function Hero({ currentAccount }) {
+export default function Hero({ testClubCreation, currentAccount }) {
   const [avatar, setAvatar] = useState(undefined);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -67,10 +67,16 @@ export default function Hero({ currentAccount }) {
         pr={20}
         className="Header"
       >
-        <HStack></HStack>
-        <div className="headercomp" justifyContent={"center"} align="center">
+        <HStack>{/*  FOR LOGO  */}</HStack>
+        <div className="headercomp" align="center">
+          {/* {if/else between two buttons for club owner and club subscriber} */}
           <Link to="/dashboard">
             <Button colorScheme="blue">Dashboard</Button>
+          </Link>
+          <Link to="/clubs">
+            <Button ml={5} colorScheme="blue">
+              Your Clubs
+            </Button>
           </Link>
           <Tag
             size="sm"
@@ -82,8 +88,7 @@ export default function Hero({ currentAccount }) {
             background="rgba(255, 255, 255, 0.1)"
           >
             <TagLabel color="rgba(245,245,245)">
-              0000000000000
-              {/* {`${currentAccount.substr(0, 6)}...${currentAccount.substr(-4)}`} */}
+              {`${currentAccount.substr(0, 6)}...${currentAccount.substr(-4)}`}
             </TagLabel>
             <Avatar
               borderStyle="solid"
@@ -137,7 +142,11 @@ export default function Hero({ currentAccount }) {
             <Button colorScheme="blue" onClick={onOpen}>
               Join Now
             </Button>
-            <CreateUser isOpen={isOpen} onClose={onClose} />
+            <CreateUser
+              testClubCreation={testClubCreation}
+              isOpen={isOpen}
+              onClose={onClose}
+            />
           </div>
         </Stack>
         <Box
