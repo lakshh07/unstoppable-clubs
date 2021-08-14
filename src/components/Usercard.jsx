@@ -81,7 +81,9 @@ function UserCard({
                   transform: "translateY(-2px)",
                   boxShadow: "lg",
                 }}
-                onClick={subscribeToClub(lockAddress, pubKey)}
+                onClick={() => {
+                  subscribeToClub(lockAddress, pubKey);
+                }}
               >
                 Subscribe
               </Button>
