@@ -411,7 +411,7 @@ function App() {
         {currentAccount === undefined ? (
           window.location.reload()
         ) : window.ethereum === undefined ? (
-          <Alert status="error" justifyContent="center">
+          <Alert status="warning" justifyContent="center" position="absolute">
             <AlertIcon />
             <AlertTitle mr={2}>Metamask Not Installed!</AlertTitle>
             <AlertDescription>Please Install Metamask.</AlertDescription>
@@ -419,7 +419,7 @@ function App() {
         ) : (
           <>
             {currentAccount === "0x0000" ? (
-              <Alert status="error" justifyContent="center">
+              <Alert status="warning" justifyContent="center" position="absolute" variant="subtle">
                 <AlertIcon />
                 <AlertTitle mr={2}>Wallet Not Connected!</AlertTitle>
                 <AlertDescription>
@@ -438,7 +438,7 @@ function App() {
             ) : chainId === "137" ||
               chainId === "80001" ||
               chainId === "1337" ? null : (
-              <Alert status="error" justifyContent="center">
+              <Alert status="warning" justifyContent="center">
                 <AlertIcon />
                 <AlertTitle mr={2}>Network Not Supported!</AlertTitle>
                 <AlertDescription>

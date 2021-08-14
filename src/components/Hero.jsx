@@ -70,15 +70,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         <HStack>{/*  FOR LOGO  */}</HStack>
         <div className="headercomp" align="center">
           {/* {if/else between two buttons for club owner and club subscriber} */}
-          <Link to="/dashboard">
-            <Button colorScheme="blue">Dashboard</Button>
-          </Link>
-          <Link to="/clubs">
-            <Button ml={5} colorScheme="blue">
-              Your Clubs
-            </Button>
-          </Link>
-          <Tag
+          { currentAccount !== "0x0000" ? <Tag
             size="sm"
             zIndex="99"
             pt={1}
@@ -100,7 +92,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
               bg="transparent"
               src={avatar}
             />
-          </Tag>
+          </Tag>: <Button colorScheme="teal" variant="solid">Connect Wallet</Button> }
         </div>
       </Flex>
       <Flex
@@ -142,6 +134,14 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             <Button colorScheme="blue" onClick={onOpen}>
               Join Now
             </Button>
+            <Link to="/dashboard">
+            <Button colorScheme="blue">Dashboard</Button>
+          </Link>
+          <Link to="/clubs">
+            <Button ml={5} colorScheme="blue">
+              Your Clubs
+            </Button>
+          </Link>
             <CreateUser
               createClub={createClub}
               isOpen={isOpen}
