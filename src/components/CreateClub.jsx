@@ -119,7 +119,7 @@ export default function Signup({ createClub, isOpen, onClose }) {
                     fontWeight="md"
                     color={useColorModeValue("gray.700", "gray.50")}
                   >
-                    Full Name
+                    Club Name
                   </FormLabel>
                   <InputGroup size="sm">
                     <Input
@@ -133,28 +133,6 @@ export default function Signup({ createClub, isOpen, onClose }) {
                     />
                   </InputGroup>
                 </FormControl>
-                <div>
-                  <FormControl mt={1}>
-                    <FormLabel
-                      fontSize="sm"
-                      fontWeight="md"
-                      color={useColorModeValue("gray.700", "gray.50")}
-                    >
-                      About
-                    </FormLabel>
-                    <Textarea
-                      placeholder="Describe about yourself."
-                      mt={1}
-                      rows={3}
-                      shadow="sm"
-                      focusBorderColor="gray.700"
-                      fontSize={{ sm: "sm" }}
-                      value={newUser.description}
-                      name="description"
-                      onChange={updateField}
-                    />
-                  </FormControl>
-                </div>
                 <FormControl>
                   <InputGroup>
                     <InputLeftAddon children="MATIC" color="gray.500" />
@@ -171,47 +149,6 @@ export default function Signup({ createClub, isOpen, onClose }) {
                       </NumberInputStepper>
                     </NumberInput>
                   </InputGroup>
-                </FormControl>
-                <FormControl>
-                  <FormLabel
-                    fontSize="sm"
-                    fontWeight="md"
-                    color={useColorModeValue("gray.700", "gray.50")}
-                  >
-                    Profile Picture
-                  </FormLabel>
-                  <Flex alignItems="center" mt={1}>
-                    <Avatar
-                      boxSize={16}
-                      bg="gray.300"
-                      src={src}
-                      icon={<AiOutlineUser fontSize="1.5rem" />}
-                    />
-                    <chakra.label
-                      cursor="pointer"
-                      rounded="md"
-                      fontSize="md"
-                      ml={5}
-                      size="sm"
-                      fontWeight="medium"
-                      color={useColorModeValue("brand.600", "brand.200")}
-                      pos="relative"
-                      _hover={{
-                        color: useColorModeValue("brand.400", "brand.300"),
-                      }}
-                    >
-                      <span>Upload Image</span>
-                      <VisuallyHidden>
-                        <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          accept="image/gif, image/jpeg, image/png"
-                          onChange={handleImg}
-                        />
-                      </VisuallyHidden>
-                    </chakra.label>
-                  </Flex>
                 </FormControl>
               </Stack>
             </chakra.form>

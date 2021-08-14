@@ -128,7 +128,7 @@ export default function CreateFile({ isOpen, onClose, publishPostFlow }) {
                     fontWeight="md"
                     color={useColorModeValue("gray.700", "gray.50")}
                   >
-                    Title
+                    Name
                   </FormLabel>
                   <InputGroup size="sm">
                     <Input

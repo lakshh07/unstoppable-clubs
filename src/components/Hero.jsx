@@ -19,16 +19,23 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import svgAvatarGenerator from "../utils/avatar";
-import { FcAdvertising, FcAssistant, FcDonate, FcInTransit, FcOrgUnit, FcReddit } from "react-icons/fc";
+import {
+  FcAdvertising,
+  FcAssistant,
+  FcDonate,
+  FcInTransit,
+  FcOrgUnit,
+  FcReddit,
+} from "react-icons/fc";
 import image from "../images/20945479.jpg";
 import Usercard from "./Usercard";
 import CreateUser from "./CreateClub";
 
 const fetchAccountClub = (a) => {
   return {
-    name: 'BESTOF WORLD'
+    name: "BESTOF WORLD",
   };
-}
+};
 
 export default function Hero({ subscribeToClub, createClub, currentAccount }) {
   const [avatar, setAvatar] = useState(undefined);
@@ -57,8 +64,12 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         >
           {icon}
         </Flex>
-        <Text fontWeight={600} fontSize={26}>{title}</Text>
-        <Text color={"gray.600"} fontSize={20}>{text}</Text>
+        <Text fontWeight={600} fontSize={26}>
+          {title}
+        </Text>
+        <Text color={"gray.600"} fontSize={20}>
+          {text}
+        </Text>
       </Stack>
     );
   };
@@ -79,29 +90,37 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         <HStack>{/*  FOR LOGO  */}</HStack>
         <div className="headercomp" align="center">
           {/* {if/else between two buttons for club owner and club subscriber} */}
-          { currentAccount !== "0x0000" ? <Tag
-            size="sm"
-            zIndex="99"
-            pt={1}
-            pb={1}
-            ml={3}
-            mr={2}
-            background="rgba(255, 255, 255, 0.3)"
-          >
-            <TagLabel color="rgba(245,245,245)">
-              {`${currentAccount.substr(0, 6)}...${currentAccount.substr(-4)}`}
-            </TagLabel>
-            <Avatar
-              borderStyle="solid"
-              borderColor="blue"
-              borderWidth="2px"
-              padding="1px"
-              ml={4}
+          {currentAccount !== "0x0000" ? (
+            <Tag
               size="sm"
-              bg="transparent"
-              src={avatar}
-            />
-          </Tag>: <Button colorScheme="teal" variant="solid">Connect Wallet</Button> }
+              zIndex="99"
+              pt={1}
+              pb={1}
+              ml={3}
+              mr={2}
+              background="rgba(255, 255, 255, 0.3)"
+            >
+              <TagLabel color="rgba(245,245,245)">
+                {`${currentAccount.substr(0, 6)}...${currentAccount.substr(
+                  -4
+                )}`}
+              </TagLabel>
+              <Avatar
+                borderStyle="solid"
+                borderColor="blue"
+                borderWidth="2px"
+                padding="1px"
+                ml={4}
+                size="sm"
+                bg="transparent"
+                src={avatar}
+              />
+            </Tag>
+          ) : (
+            <Button colorScheme="teal" variant="solid">
+              Connect Wallet
+            </Button>
+          )}
         </div>
       </Flex>
       <Flex
@@ -139,21 +158,26 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             Connect to your audience without worrying about censorship
           </Heading>
           <div>
-
-          { currentAccount !== "0x0000" ? <div>
-                                          { accountClub ? <Link to="/dashboard">
-                                            <Button colorScheme="blue">Dashboard</Button>
-                                          </Link> : <Button ml={5} colorScheme="blue">
-                                              Create Club
-                                            </Button>
-                                          }
-                                          <Link to="/clubs">
-                                            <Button ml={5} colorScheme="blue">
-                                              Explore Clubs
-                                            </Button>
-                                          </Link>
-                                          </div> 
-                    : <Button colorScheme="blue">Connect Wallet</Button>}
+            {currentAccount !== "0x0000" ? (
+              <div>
+                {accountClub ? (
+                  <Link to="/dashboard">
+                    <Button colorScheme="blue">Dashboard</Button>
+                  </Link>
+                ) : (
+                  <Button onClick={onOpen} colorScheme="blue">
+                    Create Club
+                  </Button>
+                )}
+                <Link to="/clubs">
+                  <Button ml={5} colorScheme="blue">
+                    Explore Clubs
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <Button colorScheme="blue">Connect Wallet</Button>
+            )}
             <CreateUser
               createClub={createClub}
               isOpen={isOpen}
@@ -191,29 +215,24 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
           <Feature
             icon={<Icon as={FcAdvertising} w={20} h={20} />}
             title={"Connect Directly"}
-            text={
-              "Own your members"
-            }
+            text={"Own your members"}
           />
           <Feature
             icon={<Icon as={FcOrgUnit} w={20} h={20} />}
             title={"Unstoppable"}
-            text={
-              "Everything on Blockchain and Decentralized Storage"
-            }
+            text={"Everything on Blockchain and Decentralized Storage"}
           />
           <Feature
             icon={<Icon as={FcReddit} w={20} h={20} />}
             title={"NFT Memberships"}
-            text={
-              "Mint limited memberships as NFT"
-            }
+            text={"Mint limited memberships as NFT"}
           />
         </SimpleGrid>
       </Box>
 
       <Flex align="center" justifyContent="center">
         <Box
+          p={10}
           mt="8%"
           w="1200px"
           minH="100vh"
@@ -228,7 +247,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             align="center"
             fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
             lineHeight={"110%"}
-            p="10"
+            pb="10"
           >
             Clubs
           </Heading>

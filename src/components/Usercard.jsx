@@ -7,6 +7,8 @@ import {
   Button,
   Icon,
   createIcon,
+  Tag,
+  TagLabel,
 } from "@chakra-ui/react";
 import { AiOutlineUser } from "react-icons/ai";
 import React from "react";
@@ -31,13 +33,14 @@ function UserCard({
   pubKey,
   clubName,
   clubPrice,
+  totalMembership,
 }) {
   return (
     <div className="cards">
       <div className="cards__item">
         <Box
           w={"300px"}
-          bg="whiteAlpha.800"
+          bg="whitesmoke"
           boxShadow={
             "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px"
           }
@@ -46,24 +49,16 @@ function UserCard({
           m={4}
           textAlign={"center"}
         >
-          <Avatar
-            size={"xl"}
-            // src={list.profileImg}/
-            icon={<AiOutlineUser fontSize="1.5rem" />}
-            alt={"Avatar Alt"}
-            mb={4}
-            pos={"relative"}
-          />
-          <Heading fontSize={"2xl"} color="gray.800" fontFamily={"body"}>
+          <Heading pt={5} fontSize={"2xl"} color="gray.800" fontFamily={"body"}>
             {clubName}
           </Heading>
-          {/* <Text textAlign={"center"} color="gray.600" px={3} mt={3}>
-                {list.description}
-              </Text> */}
+          <Tag m={10} background="hsla(262, 98%, 62%, 0.3)">
+            <TagLabel>Only {totalMembership} spots left</TagLabel>
+          </Tag>
           <Stack
             align={"center"}
             justify={"center"}
-            mt={8}
+            mt={2}
             direction={"row"}
             spacing={4}
           >
@@ -95,6 +90,7 @@ function UserCard({
                   rounded={"full"}
                   bg={"gray.900"}
                   color={"white"}
+                  mb={2}
                   boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
                   _hover={{
                     transform: "translateY(-2px)",

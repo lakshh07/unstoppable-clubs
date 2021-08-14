@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Heading,
-  Box,
-  Text,
-  Stack,
-  Button,
-  Center,
-  Image,
-} from "@chakra-ui/react";
+import { Heading, Box, Center } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 export default function Files({ fileName }) {
@@ -33,7 +25,7 @@ export default function Files({ fileName }) {
                   fontWeight={500}
                   fontFamily={"body"}
                 >
-                  {fileName}HEllo
+                  {fileName}
                 </Heading>
               </div>
             </div>
