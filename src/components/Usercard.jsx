@@ -66,7 +66,7 @@ function UserCard({
           >
             <Route exact path={["/", "/allclubs"]}>
               <Text fontSize={"md"} fontFamily={"Caveat"}>
-                Only at {clubPrice} Matic/Week
+                Only at {clubPrice} Matic
               </Text>
               <Button
                 fontSize={"sm"}

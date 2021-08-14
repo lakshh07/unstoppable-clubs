@@ -166,13 +166,13 @@ export default function Dashboard({
                     >
                       Create New File
                     </Button>
-                    <CreateFile
-                      publishPostFlow={publishPostFlow}
-                      isOpen={isOpen}
-                      onClose={onClose}
-                    />
                   </div>
                 ) : null}
+                <CreateFile
+                  publishPostFlow={publishPostFlow}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                />
               </Route>
               <Route exact path="/:user/files">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
