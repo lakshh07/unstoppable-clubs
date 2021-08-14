@@ -1,4 +1,3 @@
-import  { WalletService } from '@unlock-protocol/unlock-js';
 import {encrypt as ethSigEncrypt} from 'eth-sig-util';
 import { utils } from "ethers";
 import { Buffer } from 'buffer';
@@ -18,17 +17,7 @@ import {  Buckets } from '@textile/hub';
 10. Fetch a file from textile -> (filePath) => Buffer
 */
 
-const config = {
-    unlockAddress: '0xEfA9768d29AbE06AD0aa8c632736BEff39A41e1D',
-    provider: 'http://127.0.0.1:7545',
-    threadID: 'bafkzubtwkd4qhlodrzjwvsw6wbfhpugtxbkr33txn7fcqsii233tshi',
-    bucketKey: 'bafzbeibbklbg5ab4j7kwzk3jvc7h5k644hkdc6f6f26o73qh4g7plqudsm',
-    bucketAuth :{
-        key: 'b3xj7rjlhffdpc42lzz7slden4a',
-        secret: 'bvyxyvavrpsili77jufjyyffxqba6nc2mhv5gv6y'
-      }
-
-}
+import config from '../config'
 
 const ethereum = window.ethereum;
 
@@ -40,13 +29,6 @@ async function initBucket(){
     return buck;
   }
 
-//unlock
-  async function initWC(provider){
-    const wc = new WalletService({'1337': {provider: 'http://127.0.0.1:7545', unlockAddress: config.unlockAddress}});
-    await wc.connect(provider);
-    console.log(wc);
-    return wc;
-  }
 
 
   //encrypt file buffer
@@ -138,22 +120,6 @@ const uploadJson = async (jsonDoc, docPath) => {
   const uploadedFile = await uploadToTextile(jsonBuffer, docPath);
   return uploadedFile;
 }
-  const createClub = async (walletService, memberPriceInEth, clubName, totalMembers) => {
-    const lockAddress = await walletService.createLock({maxNumberOfKeys: totalMembers, name: clubName, expirationDuration: 12121311, keyPrice: memberPriceInEth})
-    return lockAddress;
-  }
-  
-
-  const subscribeToClub = async (walletService, lockAddress, pubkey) => {
-    const transactionHash = await walletService.purchaseKey({
-      lockAddress:lockAddress,
-      data: Buffer.from(pubkey)
-    }, (error, hash) =>{
-      alert('tx', hash);
-    });
-    alert(`key purchased ${transactionHash}`)
-    return transactionHash;
-  }
   
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -270,12 +236,6 @@ function bytesToHex(bytes) {
   }
 
 
-  const testClubCreation = async () => {
-      const la = await createClub("0.01","MyClub " + Math.random(), 100);
-      const th = await subscribeToClub(la);
-      console.log('ALL DONE', la, th)
-    }
-
   const fetchClubOfAddress = async () => {
     return {
       name:"BEST CLLL"
@@ -339,5 +299,5 @@ function bytesToHex(bytes) {
   }
 
   export {
-    fetchClubOfAddress
+    fetchClubOfAddress,publishPostFlow
   }
