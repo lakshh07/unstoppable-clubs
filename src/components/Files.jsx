@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Heading, Box, Center } from "@chakra-ui/react";
+import { Heading, Box, Center, Button, Flex } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 export default function Files({ fileName }) {
@@ -19,14 +19,32 @@ export default function Files({ fileName }) {
             <div className="container">
               <div className="fileImg"></div>
               <div className="container__overlay">
-                <Heading
-                  fontSize={"2xl"}
-                  textAlign={"center"}
-                  fontWeight={500}
-                  fontFamily={"body"}
-                >
-                  {fileName}
-                </Heading>
+                <Flex flexDirection="column">
+                  <Heading
+                    fontSize={"3xl"}
+                    textAlign={"center"}
+                    fontWeight={500}
+                    fontFamily={"body"}
+                    // p={4}
+                  >
+                    {fileName}
+                  </Heading>
+                  <Button
+                    fontSize={"sm"}
+                    rounded={"full"}
+                    bg={"gray.900"}
+                    color={"white"}
+                    mt={4}
+                    // mb={}
+                    boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
+                    _hover={{
+                      transform: "translateY(-2px)",
+                      boxShadow: "lg",
+                    }}
+                  >
+                    View
+                  </Button>
+                </Flex>
               </div>
             </div>
           </Box>

@@ -16,6 +16,7 @@ import {
   useDisclosure,
   Tag,
   TagLabel,
+  Box,
 } from "@chakra-ui/react";
 import { FiUsers } from "react-icons/fi";
 import { AiOutlineUser, AiOutlineSetting } from "react-icons/ai";
@@ -33,6 +34,7 @@ export default function Dashboard({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
+  const [filesAvailable, setFilesAvailable] = useState(false);
   let { user } = useParams();
 
   useEffect(() => {
@@ -115,41 +117,62 @@ export default function Dashboard({
               justifyContent="center"
             >
               {" "}
-              <Route exact path="/clubs">
-                <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
-                  <Icon
-                    as={FiUsers}
-                    display={["none", "none", "flex", "flex", "flex"]}
-                    fontSize="2xl"
-                    color="gray.700"
-                  />
-                  <Text
-                    display={["flex", "flex", "none", "flex", "flex"]}
-                    color="gray.900"
-                  >
-                    Clubs
-                  </Text>
-                </Flex>
+              <Route exact path={["/clubs", "/allclubs"]}>
+                <Link to="/clubs">
+                  <Flex p={10} className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
+                    <Icon
+                      as={FiUsers}
+                      display={["none", "none", "flex", "flex", "flex"]}
+                      fontSize="2xl"
+                      color="gray.700"
+                    />
+                    <Text
+                      display={["flex", "flex", "none", "flex", "flex"]}
+                      color="gray.900"
+                    >
+                      Your Clubs
+                    </Text>
+                  </Flex>
+                </Link>
+                <Link to="/allclubs">
+                  <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
+                    <Icon
+                      as={FiUsers}
+                      display={["none", "none", "flex", "flex", "flex"]}
+                      fontSize="2xl"
+                      color="gray.700"
+                    />
+
+                    <Text
+                      display={["flex", "flex", "none", "flex", "flex"]}
+                      color="gray.900"
+                    >
+                      Browse Clubs
+                    </Text>
+                  </Flex>
+                </Link>
               </Route>
               <Route exact path="/dashboard">
-                <div>
-                  <Button
-                    align="center"
-                    colorScheme="whiteAlpha"
-                    onClick={onOpen}
-                    _hover={{
-                      transform: "translateY(-2px)",
-                      boxShadow: "lg",
-                    }}
-                  >
-                    Create New File
-                  </Button>
-                  <CreateFile
-                    publishPostFlow={publishPostFlow}
-                    isOpen={isOpen}
-                    onClose={onClose}
-                  />
-                </div>
+                {filesAvailable ? (
+                  <div>
+                    <Button
+                      align="center"
+                      colorScheme="whiteAlpha"
+                      onClick={onOpen}
+                      _hover={{
+                        transform: "translateY(-2px)",
+                        boxShadow: "lg",
+                      }}
+                    >
+                      Create New File
+                    </Button>
+                    <CreateFile
+                      publishPostFlow={publishPostFlow}
+                      isOpen={isOpen}
+                      onClose={onClose}
+                    />
+                  </div>
+                ) : null}
               </Route>
               <Route exact path="/:user/files">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
@@ -201,12 +224,29 @@ export default function Dashboard({
             <Route exact path="/clubs">
               Your Clubs
             </Route>
+            <Route exact path="/allclubs">
+              All Clubs
+            </Route>
             <Route exact path="/:user/files">
               {user}'s Files
             </Route>
           </Heading>
         </Flex>
         <Switch>
+          <Route exact path="/allclubs">
+            <div className="cards">
+              {userList.map((list, index) => {
+                return (
+                  <Usercard
+                    key={index}
+                    clubName={list.name}
+                    clubPrice={list.price}
+                    subscribeToClub={subscribeToClub}
+                  />
+                );
+              })}
+            </div>
+          </Route>
           <Route exact path="/clubs">
             {/* {map with array of clubs of members with props} */}
             <div className="cards">
@@ -227,6 +267,52 @@ export default function Dashboard({
               {/* {map with array of clubs of members with props} */}
               <Files />
             </div>
+          </Route>
+          <Route exact path="/dashboard">
+            {filesAvailable ? (
+              <div className="cards">
+                {/* {map with array of clubs of members with props} */}
+                <Files />
+              </div>
+            ) : (
+              <Flex
+                justifyContent="center"
+                align="center"
+                mb="auto"
+                mt="7%"
+                alignItems="center"
+              >
+                <Box
+                  rounded="md"
+                  bg="whitesmoke"
+                  w="2xl"
+                  minH="40vh"
+                  alignItems="center"
+                >
+                  <Flex
+                    justifyContent="center"
+                    align="center"
+                    flexDirection="column"
+                  >
+                    <Heading as="h2" p={5} m={7}>
+                      Start Uploading Your Content !
+                    </Heading>
+                    <Button
+                      align="center"
+                      bg={"gray.900"}
+                      color={"white"}
+                      onClick={onOpen}
+                      _hover={{
+                        transform: "translateY(-2px)",
+                        boxShadow: "lg",
+                      }}
+                    >
+                      Create New File
+                    </Button>
+                  </Flex>{" "}
+                </Box>
+              </Flex>
+            )}
           </Route>
         </Switch>
       </Flex>

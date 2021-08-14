@@ -64,7 +64,6 @@ body {
 }
 .container {
   position: relative;
-  cursor: pointer;
 }
 .container__overlay {
   z-index: 99;

@@ -46,8 +46,8 @@ function App() {
     // initWC();
   }, [currentAccount]);
 
-  useEffect(async( ) => {
-      await getCurrentAccount();
+  useEffect(async () => {
+    await getCurrentAccount();
   }, []);
 
   const config = {
@@ -60,7 +60,6 @@ function App() {
       secret: "bvyxyvavrpsili77jufjyyffxqba6nc2mhv5gv6y",
     },
   };
-
 
   return (
     <ChakraProvider>
@@ -76,7 +75,12 @@ function App() {
         ) : (
           <>
             {currentAccount === "0x0000" ? (
-              <Alert status="warning" justifyContent="center" position="absolute" variant="subtle">
+              <Alert
+                status="warning"
+                justifyContent="center"
+                position="absolute"
+                variant="subtle"
+              >
                 <AlertIcon />
                 <AlertTitle mr={2}>Wallet Not Connected!</AlertTitle>
                 <AlertDescription>
@@ -105,22 +109,19 @@ function App() {
           </>
         )}
         <Route exact path="/">
-          <Hero
-            currentAccount={currentAccount}
-          />
+          <Hero currentAccount={currentAccount} />
         </Route>
         <Route exact path="/dashboard">
-          <Dashboard
-            currentAccount={currentAccount}
-          />
+          <Dashboard currentAccount={currentAccount} />
         </Route>
         <Route exact path="/:user/files">
           <Dashboard currentAccount={currentAccount} />
         </Route>
         <Route exact path="/clubs">
-          <Dashboard
-            currentAccount={currentAccount}
-          />
+          <Dashboard currentAccount={currentAccount} />
+        </Route>
+        <Route exact path="/allclubs">
+          <Dashboard currentAccount={currentAccount} />
         </Route>
       </Router>
     </ChakraProvider>

@@ -52,9 +52,11 @@ function UserCard({
           <Heading pt={5} fontSize={"2xl"} color="gray.800" fontFamily={"body"}>
             {clubName}
           </Heading>
-          <Tag m={10} background="hsla(262, 98%, 62%, 0.3)">
-            <TagLabel>Only {totalMembership} spots left</TagLabel>
-          </Tag>
+          <Route exact path={["/", "/allclubs"]}>
+            <Tag m={10} background="hsla(262, 98%, 62%, 0.3)">
+              <TagLabel>Only {totalMembership} spots left</TagLabel>
+            </Tag>
+          </Route>
           <Stack
             align={"center"}
             justify={"center"}
@@ -62,7 +64,7 @@ function UserCard({
             direction={"row"}
             spacing={4}
           >
-            <Route exact path="/">
+            <Route exact path={["/", "/allclubs"]}>
               <Text fontSize={"md"} fontFamily={"Caveat"}>
                 Only at {clubPrice} Matic/Week
               </Text>
@@ -90,6 +92,7 @@ function UserCard({
                   rounded={"full"}
                   bg={"gray.900"}
                   color={"white"}
+                  mt={5}
                   mb={2}
                   boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
                   _hover={{
