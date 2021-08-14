@@ -24,8 +24,8 @@ import { BsFiles } from "react-icons/bs";
 import svgAvatarGenerator from "../utils/avatar";
 import Usercard from "./Usercard";
 import Files from "./Files";
-import CreateUser from "./CreateClub";
 import CreateFile from "./Createfile";
+import { fetchClubOfAddress } from '../utils/utils'
 
 export default function Dashboard({
   publishPostFlow,
@@ -37,9 +37,10 @@ export default function Dashboard({
   const [filesAvailable, setFilesAvailable] = useState(false);
   let { user } = useParams();
 
-  useEffect(() => {
+  useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
+    let aClub = await fetchClubOfAddress(currentAccount);
   }, [currentAccount, user]);
 
   const userList = [
@@ -313,6 +314,7 @@ export default function Dashboard({
                 </Box>
               </Flex>
             )}
+
           </Route>
         </Switch>
       </Flex>

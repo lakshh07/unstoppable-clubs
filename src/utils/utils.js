@@ -1,15 +1,8 @@
-import { Upload, message, Button } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
 import  { WalletService } from '@unlock-protocol/unlock-js';
-
 import {encrypt as ethSigEncrypt} from 'eth-sig-util';
-
 import { utils } from "ethers";
 import { Buffer } from 'buffer';
-import React, { useEffect, useState } from "react";
-import { Address, AddressInput } from "../components";
-import { useTokenList } from "../hooks";
-import {  Buckets, encrypt } from '@textile/hub';
+import {  Buckets } from '@textile/hub';
 
 
 /*
@@ -37,6 +30,8 @@ const config = {
 
 }
 
+const ethereum = window.ethereum;
+
  
 //buckets textile
 async function initBucket(){
@@ -46,7 +41,7 @@ async function initBucket(){
   }
 
 //unlock
-  async function initWC(){
+  async function initWC(provider){
     const wc = new WalletService({'1337': {provider: 'http://127.0.0.1:7545', unlockAddress: config.unlockAddress}});
     await wc.connect(provider);
     console.log(wc);
@@ -67,7 +62,7 @@ async function initBucket(){
   }
 
 
-  const uploadToTextile = async (bufferData, name) => {
+  const uploadToTextile = async (buckets, bufferData, name) => {
     const raw = await buckets.pushPath(config.bucketKey, name, {
       path: name,
       content: bufferData
@@ -77,7 +72,7 @@ async function initBucket(){
 
 
 //returns a list of files at that path
-const fetchPathFromTextile = async (fileName, asString=true) => {
+const fetchPathFromTextile = async (buckets, fileName, asString=true) => {
   const files = [];
   const repeater = await buckets.pullPath('bafzbeibbklbg5ab4j7kwzk3jvc7h5k644hkdc6f6f26o73qh4g7plqudsm',fileName);
   for await(let i of repeater) {
@@ -138,10 +133,6 @@ const mergeUint8Arr = (myArrays) => {
     return finalDoc;
 }
 
-const hexlifyStr = (str) => {
-  return utils.hexlify(Buffer.from(JSON.stringify(str)));
-}
-
 const uploadJson = async (jsonDoc, docPath) => {
   const jsonBuffer = Buffer.from(JSON.stringify(jsonDoc));
   const uploadedFile = await uploadToTextile(jsonBuffer, docPath);
@@ -153,7 +144,7 @@ const uploadJson = async (jsonDoc, docPath) => {
   }
   
 
-  const subscribeToClub = async (lockAddress, pubkey) => {
+  const subscribeToClub = async (walletService, lockAddress, pubkey) => {
     const transactionHash = await walletService.purchaseKey({
       lockAddress:lockAddress,
       data: Buffer.from(pubkey)
@@ -224,7 +215,7 @@ function bytesToHex(bytes) {
   const fetchAllClubsOfMember = async (memberAddress) => {
     return await graphQLFetcher({
       query: `
-        posts(first: 25, where:{lock: {id: ${clubAddress}}}) {
+        posts(first: 25, where:{lock: {id: ""}}) {
           id
           sender
           description
@@ -241,7 +232,7 @@ function bytesToHex(bytes) {
 
   const graphQLFetcher =  (graphQLParams) => {
     console.log('GRAPH QL FETCHER', graphQLParams);
-    return fetch(props.subgraphUri, {
+    return fetch("", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(graphQLParams),
@@ -285,13 +276,19 @@ function bytesToHex(bytes) {
       console.log('ALL DONE', la, th)
     }
 
+  const fetchClubOfAddress = async () => {
+    return {
+      name:"BEST CLLL"
+    }
+  }
+
 
     const publishPostFlow = async (fileObject, fileName, clubAddress, clubName) => {
       const fileBuffer = await fileObject.arrayBuffer();
       const encryptedBuffer = await encryptBuffer(fileBuffer);
       console.log('MATCH FILE LENGTH', encryptedBuffer.encryptedData.byteLength)
       const uploadedStatus  = await uploadToTextile(encryptedBuffer.encryptedData,`${clubName}/${fileName}`);
-      const members = await fetchMembers();
+      const members = [];
       
       const arrayBuffer = await crypto.subtle.exportKey("raw",encryptedBuffer.encryptionKey);
       const ekeyhex = bytesToHex(new Uint8Array(arrayBuffer));
@@ -303,18 +300,18 @@ function bytesToHex(bytes) {
       const jsonDocPath = `${clubName}/${fileName}_md`;
       await uploadJson(jsonDoc, jsonDocPath);
   
-      const PostContract = require("../contracts/hardhat_contracts.json")['1337']['localhost']['contracts']['PublicLockPosts']
-      const contract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
-      const postId  = await contract.publishPost(clubAddress, `${fileName},${jsonDocPath}`);
-      return postId;
+      // const PostContract = require("../contracts/hardhat_contracts.json")['1337']['localhost']['contracts']['PublicLockPosts']
+      // const contract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
+      // const postId  = await contract.publishPost(clubAddress, `${fileName},${jsonDocPath}`);
+      // return postId;
   }
 
 
   const fetchPostFlow = async (clubAddress,clubName) => {
     const myAddress = await ethereum.request({'method': 'eth_requestAccounts'});
-    const PostContract = require("../contracts/hardhat_contracts.json")['1337']['localhost']['contracts']['PublicLockPosts']
-    const contract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
-    const postURI = await contract.lastTokenURI();
+    // const PostContract = require("../contracts/hardhat_contracts.json")['1337']['localhost']['contracts']['PublicLockPosts']
+    // const contract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
+    const postURI = ""//await contract.lastTokenURI();
     const jsonDocPath = postURI.split(',')[1]
     const jsonDocStr = await fetchPathFromTextile(jsonDocPath)
     const jsonDoc = JSON.parse(jsonDocStr);
@@ -339,4 +336,8 @@ function bytesToHex(bytes) {
 
     console.log('DECRYPT', fileAsBuffer);
     
+  }
+
+  export {
+    fetchClubOfAddress
   }

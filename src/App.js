@@ -97,7 +97,7 @@ function App() {
               </Alert>
             ) : chainId === "137" ||
               chainId === "80001" ||
-              chainId === "1337" ? null : (
+              chainId === "1337" || chainId === "5777"? null : (
               <Alert status="warning" justifyContent="center">
                 <AlertIcon />
                 <AlertTitle mr={2}>Network Not Supported!</AlertTitle>
