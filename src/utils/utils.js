@@ -85,7 +85,6 @@ const mergeUint8Arr = (myArrays) => {
 
 
   const getPubKeyFromMetamask = async () => {
-    await ethereum.request({'method': 'eth_requestAccounts'});
     const pubKey = await ethereum.request({'method': 'eth_getEncryptionPublicKey','params': [ethereum.selectedAddress]});
     return pubKey;
   }
@@ -299,5 +298,5 @@ function bytesToHex(bytes) {
   }
 
   export {
-    fetchClubOfAddress,publishPostFlow
+    fetchClubOfAddress,publishPostFlow, getPubKeyFromMetamask
   }

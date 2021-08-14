@@ -26,25 +26,32 @@ import Usercard from "./Usercard";
 import Files from "./Files";
 import CreateFile from "./Createfile";
 import { fetchClubOfAddress,publishPostFlow } from '../utils/utils'
-
+import CreateClub from "./CreateClub";
 
 export default function Dashboard({
   currentAccount,
   provider,
   signer,
   clubService,
+  graphService,
   clubAddress,
   clubName
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
   const [filesAvailable, setFilesAvailable] = useState(false);
+  const [showCC, setShowCC ] = useState(false);
   let { user } = useParams();
 
   useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
   }, [currentAccount, user]);
+
+  const onCreateClub = async (memberPriceInEth, clubName, totalMembers) => {
+    const lockAddress = await clubService.createClub(memberPriceInEth, clubName, totalMembers);
+    return lockAddress;
+  }
 
   const userList = [
     {
@@ -271,8 +278,14 @@ export default function Dashboard({
             </div>
           </Route>
           <Route exact path="/dashboard">
-          { !clubAddress ? <Button colorScheme="blue" onClick={() => {console.log('Clocike');}
+          { !clubAddress ? <Button colorScheme="blue" onClick={() => {
+            setShowCC(true);
+          }
           }>Create Club</Button>:null}
+           <CreateClub isOpen={showCC}
+            createClub={onCreateClub}
+            onClose={() => { setShowCC(false);}}
+           ></CreateClub>
             {filesAvailable ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}
@@ -317,8 +330,6 @@ export default function Dashboard({
                 </Box>
               </Flex>
             )}
-
-
           </Route>
         </Switch>
       </Flex>

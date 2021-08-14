@@ -40,16 +40,17 @@ export default function Signup({ createClub, isOpen, onClose }) {
     name: "",
     description: "",
     price: "",
+    totalMembers: 100
   });
-  const createUser = async () => {
-    const la = await createClub("0.01", "MyClub " + Math.random(), 100);
+  const onCreateClicked = async () => {
+    const la = await createClub(newUser.price, newUser.name, newUser.totalMembers);
     console.log(la);
     {
       la
         ? toast({
             position: "top-right",
             title: "Transaction Successfull!",
-            description: `Welcome ${newUser.name}.`,
+            description: `${newUser.name} created with address ${la}`,
             status: "success",
             duration: 5000,
             isClosable: true,
@@ -150,6 +151,23 @@ export default function Signup({ createClub, isOpen, onClose }) {
                     </NumberInput>
                   </InputGroup>
                 </FormControl>
+                <FormControl>
+                  <InputGroup>
+                    <InputLeftAddon children="Total Members" color="gray.500" />
+                    <NumberInput min={0} w="100%" focusBorderColor="gray.700">
+                      <NumberInputField
+                        placeholder="total members allowed"
+                        value={newUser.totalMembers}
+                        name="totalMembers"
+                        onChange={updateField}
+                      />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </InputGroup>
+                </FormControl>
               </Stack>
             </chakra.form>
           </ModalBody>
@@ -162,9 +180,11 @@ export default function Signup({ createClub, isOpen, onClose }) {
                 boxShadow: "lg",
               }}
               mr={3}
-              onClick={(event) => {
+              onClick={async (event) => {
+
+                await onCreateClicked();
                 onClose();
-                createUser();
+
               }}
             >
               Create

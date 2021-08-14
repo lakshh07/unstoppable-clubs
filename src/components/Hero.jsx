@@ -28,8 +28,9 @@ import {
   FcReddit,
 } from "react-icons/fc";
 import image from "../images/20945479.jpg";
-import Usercard from "./Usercard";
+import ClubCard from "./Usercard";
 import CreateUser from "./CreateClub";
+import  {getPubKeyFromMetamask} from '../utils/utils';
 
 const fetchAccountClub = (a) => {
   return {
@@ -37,10 +38,11 @@ const fetchAccountClub = (a) => {
   };
 };
 
-export default function Hero({ subscribeToClub, createClub, currentAccount }) {
+export default function Hero({ currentAccount, clubService, graphService }) {
   const [avatar, setAvatar] = useState(undefined);
   const [accountClub, setAccountClub] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [allClubs, setClubs ] = useState([]);
 
   useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
@@ -48,6 +50,13 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
     let aClub = fetchAccountClub(currentAccount);
     setAccountClub(aClub);
   }, [currentAccount]);
+
+  useEffect(async () => {
+    
+   let clubs = await graphService.fetchClubs();
+   setClubs(clubs);
+   console.log('GRAPHT SERVICE CALLED WITH RESULT', clubs);
+  }, [])
 
   const Feature = ({ icon, title, text }) => {
     return (
@@ -178,11 +187,6 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             ) : (
               <Button colorScheme="blue">Connect Wallet</Button>
             )}
-            <CreateUser
-              createClub={createClub}
-              isOpen={isOpen}
-              onClose={onClose}
-            />
           </div>
         </Stack>
         <Box
@@ -253,8 +257,12 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
           </Heading>
           <Flex justify-content="center" mr="10px">
             <div className="cards">
-              {/* {map with array of all clubs with props} */}
-              <Usercard subscribeToClub={subscribeToClub} />
+              { 
+              allClubs.map((club) => <ClubCard clubName={club.name} lockAddress={club.address} clubPrice={club.price} totalMembership={"100"} subscribeToClub={async () => {
+                let pubkey = await getPubKeyFromMetamask();
+                clubService.subscribeToClub(club.address, pubkey);
+              }}></ClubCard>) 
+              }
             </div>
           </Flex>
         </Box>

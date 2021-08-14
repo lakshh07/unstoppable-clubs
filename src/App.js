@@ -14,6 +14,7 @@ import Dashboard from "./components/Dashboard";
 import Hero from "./components/Hero";
 import { EPERM } from "constants";
 import ClubService from "./utils/ClubService";
+import GraphService from "./utils/GraphService";
 
 const getMetamaskProvider = async () => {
   if(window.ethereum){
@@ -23,6 +24,7 @@ const getMetamaskProvider = async () => {
     return null;
   }
 }
+const gService = new GraphService();
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState("0x0000");
@@ -32,6 +34,9 @@ function App() {
   const  [mProvider, setProvider] = useState();
   const [mSigner, setSigner] = useState();
   const [clService, setClubService] = useState();
+  // const [gService, setgService] = useState();
+  
+  
 
   const getCurrentAccount = async () => {
     const accounts = await window.ethereum.request({
@@ -44,6 +49,7 @@ function App() {
     let cService = new ClubService();
     await cService.init(mprovider);
     setClubService(cService);
+    
   };
 
   useEffect(() => {
@@ -134,6 +140,8 @@ function App() {
             provider={mProvider}
             signer={mSigner}
             currentAccount={currentAccount}
+            graphService={gService}
+            clubService={clService}
           />
         </Route>
         <Route exact path="/dashboard">
@@ -142,6 +150,7 @@ function App() {
             signer={mSigner}
             currentAccount={currentAccount}
             clubService={clService}
+            graphService={gService}
           />
         </Route>
         <Route exact path="/:user/files">
