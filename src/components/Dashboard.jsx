@@ -24,20 +24,24 @@ import { BsFiles } from "react-icons/bs";
 import svgAvatarGenerator from "../utils/avatar";
 import Usercard from "./Usercard";
 import Files from "./Files";
-import CreateUser from "./CreateClub";
 import CreateFile from "./Createfile";
+import { fetchClubOfAddress,publishPostFlow } from '../utils/utils'
+
 
 export default function Dashboard({
-  publishPostFlow,
-  subscribeToClub,
   currentAccount,
+  provider,
+  signer,
+  clubService,
+  clubAddress,
+  clubName
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
   const [filesAvailable, setFilesAvailable] = useState(false);
   let { user } = useParams();
 
-  useEffect(() => {
+  useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
   }, [currentAccount, user]);
@@ -241,7 +245,6 @@ export default function Dashboard({
                     key={index}
                     clubName={list.name}
                     clubPrice={list.price}
-                    subscribeToClub={subscribeToClub}
                   />
                 );
               })}
@@ -256,7 +259,6 @@ export default function Dashboard({
                     key={index}
                     clubName={list.name}
                     clubPrice={list.price}
-                    subscribeToClub={subscribeToClub}
                   />
                 );
               })}
@@ -269,6 +271,8 @@ export default function Dashboard({
             </div>
           </Route>
           <Route exact path="/dashboard">
+          { !clubAddress ? <Button colorScheme="blue" onClick={() => {console.log('Clocike');}
+          }>Create Club</Button>:null}
             {filesAvailable ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}
@@ -313,6 +317,8 @@ export default function Dashboard({
                 </Box>
               </Flex>
             )}
+
+
           </Route>
         </Switch>
       </Flex>

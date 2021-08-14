@@ -13,18 +13,37 @@ import { ethers } from "ethers";
 import Dashboard from "./components/Dashboard";
 import Hero from "./components/Hero";
 import { EPERM } from "constants";
+import ClubService from "./utils/ClubService";
+
+const getMetamaskProvider = async () => {
+  if(window.ethereum){
+    await window.ethereum.enable()
+    return new ethers.providers.Web3Provider(window.ethereum);
+  } else {
+    return null;
+  }
+}
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState("0x0000");
   const [chainId, setChainId] = useState();
   const [walletService, setWalletService] = useState();
   const [buckets, setBuckets] = useState();
+  const  [mProvider, setProvider] = useState();
+  const [mSigner, setSigner] = useState();
+  const [clService, setClubService] = useState();
 
   const getCurrentAccount = async () => {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
     setCurrentAccount(ethers.utils.getAddress(accounts[0]));
+    const mprovider = await getMetamaskProvider();
+    setProvider(mprovider);
+    setSigner(mprovider.getSigner());
+    let cService = new ClubService();
+    await cService.init(mprovider);
+    setClubService(cService);
   };
 
   useEffect(() => {
@@ -97,7 +116,9 @@ function App() {
               </Alert>
             ) : chainId === "137" ||
               chainId === "80001" ||
-              chainId === "1337" ? null : (
+
+              chainId === "1337" || chainId === "5777"? null : (
+
               <Alert status="warning" justifyContent="center">
                 <AlertIcon />
                 <AlertTitle mr={2}>Network Not Supported!</AlertTitle>
@@ -109,19 +130,31 @@ function App() {
           </>
         )}
         <Route exact path="/">
-          <Hero currentAccount={currentAccount} />
+          <Hero
+            provider={mProvider}
+            signer={mSigner}
+            currentAccount={currentAccount}
+          />
         </Route>
         <Route exact path="/dashboard">
-          <Dashboard currentAccount={currentAccount} />
+          <Dashboard
+            provider={mProvider}
+            signer={mSigner}
+            currentAccount={currentAccount}
+            clubService={clService}
+          />
         </Route>
         <Route exact path="/:user/files">
+            provider={mProvider}
+            signer={mSigner}
           <Dashboard currentAccount={currentAccount} />
         </Route>
         <Route exact path="/clubs">
-          <Dashboard currentAccount={currentAccount} />
-        </Route>
-        <Route exact path="/allclubs">
-          <Dashboard currentAccount={currentAccount} />
+          <Dashboard
+            provider={mProvider}
+            signer={mSigner}
+            currentAccount={currentAccount}
+          />
         </Route>
       </Router>
     </ChakraProvider>
