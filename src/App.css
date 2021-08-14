@@ -44,7 +44,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-  justify-content: space-evenly;
+  justify-content: space-between;
   /* margin-left: -8px; */
   /* margin-right: -3px; */
 }
@@ -53,12 +53,21 @@ body {
   padding-left: 5px;
   padding-right: 5px;
 }
+.fileImg {
+  background-image: url("https://i.pinimg.com/originals/0b/0d/bd/0b0dbd0c302538d799bd14dabef26f4f.jpg");
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  height: 150px;
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .container {
   position: relative;
-  user-select: none;
-  -webkit-user-select: none;
+  cursor: pointer;
 }
 .container__overlay {
+  z-index: 99;
   left: 0;
   position: absolute;
   top: 0;
@@ -67,9 +76,9 @@ body {
   align-items: center;
   display: flex;
   justify-content: center;
-  color: whitesmoke;
+  color: rgb(0, 0, 0);
   font-family: "Baloo Chettan 2", cursive;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .gradient {
   background: hsla(262, 98%, 62%, 1);

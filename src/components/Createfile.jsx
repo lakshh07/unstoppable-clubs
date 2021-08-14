@@ -143,28 +143,6 @@ export default function CreateFile({ isOpen, onClose, publishPostFlow }) {
                     />
                   </InputGroup>
                 </FormControl>
-                <div>
-                  <FormControl id="email" mt={1}>
-                    <FormLabel
-                      fontSize="sm"
-                      fontWeight="md"
-                      color={useColorModeValue("gray.700", "gray.50")}
-                    >
-                      Description
-                    </FormLabel>
-                    <Textarea
-                      placeholder="Describe what your piece is (max 250 characters)"
-                      mt={1}
-                      rows={3}
-                      shadow="sm"
-                      name="description"
-                      focusBorderColor="gray.700"
-                      fontSize={{ sm: "sm" }}
-                      value={newFile.description}
-                      onChange={updateField}
-                    />
-                  </FormControl>
-                </div>
                 <FormControl isRequired>
                   <FormLabel
                     fontSize="sm"
