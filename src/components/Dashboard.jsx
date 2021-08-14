@@ -24,9 +24,9 @@ import { BsFiles } from "react-icons/bs";
 import svgAvatarGenerator from "../utils/avatar";
 import Usercard from "./Usercard";
 import Files from "./Files";
+import CreateUser from "./CreateClub";
 import CreateFile from "./Createfile";
-import { fetchClubOfAddress,publishPostFlow } from '../utils/utils'
-
+import { fetchClubOfAddress, publishPostFlow } from "../utils/utils";
 
 export default function Dashboard({
   currentAccount,
@@ -34,7 +34,7 @@ export default function Dashboard({
   signer,
   clubService,
   clubAddress,
-  clubName
+  clubName,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
@@ -271,8 +271,16 @@ export default function Dashboard({
             </div>
           </Route>
           <Route exact path="/dashboard">
-          { !clubAddress ? <Button colorScheme="blue" onClick={() => {console.log('Clocike');}
-          }>Create Club</Button>:null}
+            {!clubAddress ? (
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  console.log("Clocike");
+                }}
+              >
+                Create Club
+              </Button>
+            ) : null}
             {filesAvailable ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}
@@ -317,8 +325,6 @@ export default function Dashboard({
                 </Box>
               </Flex>
             )}
-
-
           </Route>
         </Switch>
       </Flex>

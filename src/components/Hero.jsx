@@ -129,7 +129,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         direction={{ base: "column-reverse", md: "row" }}
         wrap="no-wrap"
         minH="90vh"
-        px={20}
+        mx={20}
         mt={-4}
       >
         <Stack

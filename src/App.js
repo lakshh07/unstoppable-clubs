@@ -16,20 +16,20 @@ import { EPERM } from "constants";
 import ClubService from "./utils/ClubService";
 
 const getMetamaskProvider = async () => {
-  if(window.ethereum){
-    await window.ethereum.enable()
+  if (window.ethereum) {
+    await window.ethereum.enable();
     return new ethers.providers.Web3Provider(window.ethereum);
   } else {
     return null;
   }
-}
+};
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState("0x0000");
   const [chainId, setChainId] = useState();
   const [walletService, setWalletService] = useState();
   const [buckets, setBuckets] = useState();
-  const  [mProvider, setProvider] = useState();
+  const [mProvider, setProvider] = useState();
   const [mSigner, setSigner] = useState();
   const [clService, setClubService] = useState();
 
@@ -116,9 +116,8 @@ function App() {
               </Alert>
             ) : chainId === "137" ||
               chainId === "80001" ||
-
-              chainId === "1337" || chainId === "5777"? null : (
-
+              chainId === "1337" ||
+              chainId === "5777" ? null : (
               <Alert status="warning" justifyContent="center">
                 <AlertIcon />
                 <AlertTitle mr={2}>Network Not Supported!</AlertTitle>
@@ -145,11 +144,20 @@ function App() {
           />
         </Route>
         <Route exact path="/:user/files">
+          <Dashboard
             provider={mProvider}
             signer={mSigner}
-          <Dashboard currentAccount={currentAccount} />
+            currentAccount={currentAccount}
+          />
         </Route>
         <Route exact path="/clubs">
+          <Dashboard
+            provider={mProvider}
+            signer={mSigner}
+            currentAccount={currentAccount}
+          />
+        </Route>
+        <Route exact path="/allclubs">
           <Dashboard
             provider={mProvider}
             signer={mSigner}
