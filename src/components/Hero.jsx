@@ -19,26 +19,35 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import svgAvatarGenerator from "../utils/avatar";
-import { FcAssistant, FcDonate, FcInTransit } from "react-icons/fc";
+import { FcAdvertising, FcAssistant, FcDonate, FcInTransit, FcOrgUnit, FcReddit } from "react-icons/fc";
 import image from "../images/20945479.jpg";
 import Usercard from "./Usercard";
 import CreateUser from "./CreateClub";
 
+const fetchAccountClub = (a) => {
+  return {
+    name: 'BESTOF WORLD'
+  };
+}
+
 export default function Hero({ subscribeToClub, createClub, currentAccount }) {
   const [avatar, setAvatar] = useState(undefined);
+  const [accountClub, setAccountClub] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
+  useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
+    let aClub = fetchAccountClub(currentAccount);
+    setAccountClub(aClub);
   }, [currentAccount]);
 
   const Feature = ({ icon, title, text }) => {
     return (
       <Stack align="center">
         <Flex
-          w={16}
-          h={16}
+          w={32}
+          h={32}
           align={"center"}
           justify={"center"}
           color={"white"}
@@ -48,8 +57,8 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         >
           {icon}
         </Flex>
-        <Text fontWeight={600}>{title}</Text>
-        <Text color={"gray.600"}>{text}</Text>
+        <Text fontWeight={600} fontSize={26}>{title}</Text>
+        <Text color={"gray.600"} fontSize={20}>{text}</Text>
       </Stack>
     );
   };
@@ -77,7 +86,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             pb={1}
             ml={3}
             mr={2}
-            background="rgba(255, 255, 255, 0.1)"
+            background="rgba(255, 255, 255, 0.3)"
           >
             <TagLabel color="rgba(245,245,245)">
               {`${currentAccount.substr(0, 6)}...${currentAccount.substr(-4)}`}
@@ -127,21 +136,24 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
             lineHeight={1.5}
             textAlign={["center", "center", "left", "left"]}
           >
-            This is the subheader section where you describe the basic benefits
-            of your product
+            Connect to your audience without worrying about censorship
           </Heading>
           <div>
-            <Button colorScheme="blue" onClick={onOpen}>
-              Join Now
-            </Button>
-            <Link to="/dashboard">
-            <Button colorScheme="blue">Dashboard</Button>
-          </Link>
-          <Link to="/clubs">
-            <Button ml={5} colorScheme="blue">
-              Your Clubs
-            </Button>
-          </Link>
+
+          { currentAccount !== "0x0000" ? <div>
+                                          { accountClub ? <Link to="/dashboard">
+                                            <Button colorScheme="blue">Dashboard</Button>
+                                          </Link> : <Button ml={5} colorScheme="blue">
+                                              Create Club
+                                            </Button>
+                                          }
+                                          <Link to="/clubs">
+                                            <Button ml={5} colorScheme="blue">
+                                              Explore Clubs
+                                            </Button>
+                                          </Link>
+                                          </div> 
+                    : <Button colorScheme="blue">Connect Wallet</Button>}
             <CreateUser
               createClub={createClub}
               isOpen={isOpen}
@@ -177,24 +189,24 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
         </Heading>
         <SimpleGrid align="center" columns={{ base: 1, md: 3 }} spacing={10}>
           <Feature
-            icon={<Icon as={FcAssistant} w={10} h={10} />}
-            title={"Lifetime Support"}
+            icon={<Icon as={FcAdvertising} w={20} h={20} />}
+            title={"Connect Directly"}
             text={
-              "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore..."
+              "Own your members"
             }
           />
           <Feature
-            icon={<Icon as={FcDonate} w={10} h={10} />}
-            title={"Unlimited Donations"}
+            icon={<Icon as={FcOrgUnit} w={20} h={20} />}
+            title={"Unstoppable"}
             text={
-              "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore..."
+              "Everything on Blockchain and Decentralized Storage"
             }
           />
           <Feature
-            icon={<Icon as={FcInTransit} w={10} h={10} />}
-            title={"Instant Delivery"}
+            icon={<Icon as={FcReddit} w={20} h={20} />}
+            title={"NFT Memberships"}
             text={
-              "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore..."
+              "Mint limited memberships as NFT"
             }
           />
         </SimpleGrid>
