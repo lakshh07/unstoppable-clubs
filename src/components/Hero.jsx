@@ -24,7 +24,7 @@ import image from "../images/20945479.jpg";
 import Usercard from "./Usercard";
 import CreateUser from "./CreateClub";
 
-export default function Hero({ testClubCreation, currentAccount }) {
+export default function Hero({ subscribeToClub, createClub, currentAccount }) {
   const [avatar, setAvatar] = useState(undefined);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -143,7 +143,7 @@ export default function Hero({ testClubCreation, currentAccount }) {
               Join Now
             </Button>
             <CreateUser
-              testClubCreation={testClubCreation}
+              createClub={createClub}
               isOpen={isOpen}
               onClose={onClose}
             />
@@ -221,7 +221,10 @@ export default function Hero({ testClubCreation, currentAccount }) {
             Clubs
           </Heading>
           <Flex justify-content="center" mr="10px">
-            <Usercard />
+            <div className="cards">
+              {/* {map with array of all clubs with props} */}
+              <Usercard subscribeToClub={subscribeToClub} />
+            </div>
           </Flex>
         </Box>
       </Flex>

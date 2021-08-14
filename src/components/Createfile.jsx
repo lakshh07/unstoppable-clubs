@@ -26,7 +26,7 @@ import {
 import { AiFillFileAdd } from "react-icons/ai";
 import Checker from "./Checker";
 
-export default function CreateFile({ isOpen, onClose, testEncryptedUpload }) {
+export default function CreateFile({ isOpen, onClose, publishPostFlow }) {
   const toast = useToast();
   const [transactionLoading, setTransactionLoading] = useState(false);
 
@@ -45,16 +45,13 @@ export default function CreateFile({ isOpen, onClose, testEncryptedUpload }) {
 
   const createFile = async () => {
     changeLoading();
-    const uploadStatus = testEncryptedUpload();
-
-    // const transaction = await contractSigner.upload(
-    //   // newFile.name,
-    //   "txt",
-    //   newFile.description,
-    //   newFile.title,
-    //   "asfg"
-    // );
-    if (uploadStatus === 1) {
+    const uploadStatus = await publishPostFlow(
+      file,
+      name,
+      "0xDF51b83D026DFcA0F3141e76D2D882e5FB29138f",
+      "Sandy"
+    );
+    if (uploadStatus) {
       setTransactionLoading(false);
       toast({
         position: "top-right",
@@ -114,7 +111,6 @@ export default function CreateFile({ isOpen, onClose, testEncryptedUpload }) {
           <ModalBody>
             {" "}
             <chakra.form
-              // method="POST"
               shadow="base"
               rounded={[null, "md"]}
               overflow={{ sm: "hidden" }}

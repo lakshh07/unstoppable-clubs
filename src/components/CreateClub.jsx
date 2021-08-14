@@ -30,12 +30,7 @@ import {
 import { AiOutlineUser } from "react-icons/ai";
 // import { ethers } from "ethers";
 
-export default function Signup({
-  testClubCreation,
-  isOpen,
-  onClose,
-  contractSigner,
-}) {
+export default function Signup({ createClub, isOpen, onClose }) {
   const toast = useToast();
   const [{ alt, src }, setImg] = useState({
     src: "",
@@ -47,33 +42,27 @@ export default function Signup({
     price: "",
   });
   const createUser = async () => {
-    testClubCreation();
-    // const transaction = await contractSigner.create(
-    //   newUser.name,
-    //   newUser.description,
-    //   newUser.price,
-    //   "asfg"
-    // );
-    // const { status } = await transaction.wait();
-    // {
-    //   status === 1
-    //     ? toast({
-    //         position: "top-right",
-    //         title: "Transaction Successfull!",
-    //         description: `Welcome ${newUser.name}.`,
-    //         status: "success",
-    //         duration: 5000,
-    //         isClosable: true,
-    //       })
-    //     : toast({
-    //         position: "top-right",
-    //         title: "Transaction Failed!",
-    //         description: "Unable to create user account.",
-    //         status: "error",
-    //         duration: 5000,
-    //         isClosable: true,
-    //       });
-    // }
+    const la = await createClub("0.01", "MyClub " + Math.random(), 100);
+    console.log(la);
+    {
+      la
+        ? toast({
+            position: "top-right",
+            title: "Transaction Successfull!",
+            description: `Welcome ${newUser.name}.`,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          })
+        : toast({
+            position: "top-right",
+            title: "Transaction Failed!",
+            description: "Unable to create user account.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+    }
     setNewUser({ name: "", description: "", price: "" });
     setImg({ src: "", alt: "" });
     // setInterval(() => {

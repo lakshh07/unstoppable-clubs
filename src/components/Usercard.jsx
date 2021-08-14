@@ -11,7 +11,6 @@ import {
 import { AiOutlineUser } from "react-icons/ai";
 import React from "react";
 import { Link, Route } from "react-router-dom";
-//   import { ethers } from "ethers";
 
 const Arrow = createIcon({
   displayName: "Arrow",
@@ -26,129 +25,97 @@ const Arrow = createIcon({
   ),
 });
 
-const userList = [
-  {
-    id: "1",
-    profileImg:
-      "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-    name: "Lindsey James",
-    description: "Musician, PM for work inquires or me in your posts",
-    amount: "5",
-  },
-  {
-    id: "2",
-    profileImg:
-      "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-    name: "Soraya Naomi",
-    description: "Model",
-    amount: "10",
-  },
-  {
-    id: "3",
-    profileImg:
-      "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-    name: "Lindsey James",
-    description: "Musician, PM for work inquires or me in your posts",
-    amount: "5",
-  },
-  {
-    id: "4",
-    profileImg:
-      "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-    name: "Soraya Naomi",
-    description: "Model",
-    amount: "10",
-  },
-];
-
-function UserCard({}) {
+function UserCard({
+  subscribeToClub,
+  lockAddress,
+  pubKey,
+  clubName,
+  clubPrice,
+}) {
   return (
     <div className="cards">
-      {userList.map((list) => {
-        return (
-          <div className="cards__item" key={list.id}>
-            <Box
-              w={"300px"}
-              bg="whiteAlpha.800"
-              boxShadow={
-                "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px"
-              }
-              rounded={"lg"}
-              p={4}
-              m={4}
-              textAlign={"center"}
-            >
-              <Avatar
-                size={"xl"}
-                // src={list.profileImg}/
-                icon={<AiOutlineUser fontSize="1.5rem" />}
-                alt={"Avatar Alt"}
-                mb={4}
-                pos={"relative"}
-              />
-              <Heading fontSize={"2xl"} color="gray.800" fontFamily={"body"}>
-                {list.name}
-              </Heading>
-              <Text textAlign={"center"} color="gray.600" px={3} mt={3}>
+      <div className="cards__item">
+        <Box
+          w={"300px"}
+          bg="whiteAlpha.800"
+          boxShadow={
+            "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px"
+          }
+          rounded={"lg"}
+          p={4}
+          m={4}
+          textAlign={"center"}
+        >
+          <Avatar
+            size={"xl"}
+            // src={list.profileImg}/
+            icon={<AiOutlineUser fontSize="1.5rem" />}
+            alt={"Avatar Alt"}
+            mb={4}
+            pos={"relative"}
+          />
+          <Heading fontSize={"2xl"} color="gray.800" fontFamily={"body"}>
+            {clubName}
+          </Heading>
+          {/* <Text textAlign={"center"} color="gray.600" px={3} mt={3}>
                 {list.description}
+              </Text> */}
+          <Stack
+            align={"center"}
+            justify={"center"}
+            mt={8}
+            direction={"row"}
+            spacing={4}
+          >
+            <Route exact path="/">
+              <Text fontSize={"md"} fontFamily={"Caveat"}>
+                Only at {clubPrice} Matic/Week
               </Text>
-              <Stack
-                align={"center"}
-                justify={"center"}
-                mt={8}
-                direction={"row"}
-                spacing={4}
+              <Button
+                fontSize={"sm"}
+                rounded={"full"}
+                bg={"gray.900"}
+                color={"white"}
+                boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
+                _hover={{
+                  transform: "translateY(-2px)",
+                  boxShadow: "lg",
+                }}
+                onClick={subscribeToClub(lockAddress, pubKey)}
               >
-                <Route exact path="/">
-                  <Text fontSize={"md"} fontFamily={"Caveat"}>
-                    Only at {list.amount} Matic/Week
-                  </Text>
-                  <Button
-                    fontSize={"sm"}
-                    rounded={"full"}
-                    bg={"gray.900"}
-                    color={"white"}
-                    boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
-                    _hover={{
-                      transform: "translateY(-2px)",
-                      boxShadow: "lg",
-                    }}
-                  >
-                    Subscribe
-                  </Button>
-                </Route>
-                <Route exact path="/clubs">
-                  <Link to={`/${list.name}/files`}>
-                    <Button
-                      fontSize={"sm"}
-                      rounded={"full"}
-                      bg={"gray.900"}
-                      color={"white"}
-                      boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
-                      _hover={{
-                        transform: "translateY(-2px)",
-                        boxShadow: "lg",
-                      }}
-                    >
-                      View Files
-                    </Button>
-                  </Link>
-                </Route>
-              </Stack>
-              <Route exact path="/">
-                <Icon
-                  as={Arrow}
-                  color="gray.600"
-                  w={71}
-                  right={4}
-                  top={"70px"}
-                  transform={"rotate(10deg)"}
-                />
-              </Route>
-            </Box>
-          </div>
-        );
-      })}
+                Subscribe
+              </Button>
+            </Route>
+            <Route exact path="/clubs">
+              <Link to={`/${clubName}/files`}>
+                <Button
+                  fontSize={"sm"}
+                  rounded={"full"}
+                  bg={"gray.900"}
+                  color={"white"}
+                  boxShadow={"rgba(149, 157, 165, 0.2) 0px 8px 24px"}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "lg",
+                  }}
+                >
+                  View Files
+                </Button>
+              </Link>
+            </Route>
+          </Stack>
+          <Route exact path="/">
+            <Icon
+              as={Arrow}
+              color="gray.600"
+              w={71}
+              right={4}
+              top={"70px"}
+              transform={"rotate(10deg)"}
+            />
+          </Route>
+        </Box>
+      </div>
     </div>
   );
 }

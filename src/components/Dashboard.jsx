@@ -26,7 +26,11 @@ import Files from "./Files";
 import CreateUser from "./CreateClub";
 import CreateFile from "./Createfile";
 
-export default function Dashboard({ testEncryptedUpload, currentAccount }) {
+export default function Dashboard({
+  publishPostFlow,
+  subscribeToClub,
+  currentAccount,
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
   let { user } = useParams();
@@ -35,6 +39,41 @@ export default function Dashboard({ testEncryptedUpload, currentAccount }) {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
   }, [currentAccount, user]);
+
+  const userList = [
+    {
+      id: "1",
+      profileImg:
+        "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
+      name: "Lindsey James",
+      description: "Musician, PM for work inquires or me in your posts",
+      amount: "5",
+    },
+    {
+      id: "2",
+      profileImg:
+        "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
+      name: "Soraya Naomi",
+      description: "Model",
+      amount: "10",
+    },
+    {
+      id: "3",
+      profileImg:
+        "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
+      name: "Lindsey James",
+      description: "Musician, PM for work inquires or me in your posts",
+      amount: "5",
+    },
+    {
+      id: "4",
+      profileImg:
+        "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
+      name: "Soraya Naomi",
+      description: "Model",
+      amount: "10",
+    },
+  ];
 
   return (
     <Flex
@@ -106,7 +145,7 @@ export default function Dashboard({ testEncryptedUpload, currentAccount }) {
                     Create New File
                   </Button>
                   <CreateFile
-                    testEncryptedUpload={testEncryptedUpload}
+                    publishPostFlow={publishPostFlow}
                     isOpen={isOpen}
                     onClose={onClose}
                   />
@@ -169,13 +208,25 @@ export default function Dashboard({ testEncryptedUpload, currentAccount }) {
         </Flex>
         <Switch>
           <Route exact path="/clubs">
-            <Usercard />
+            {/* {map with array of clubs of members with props} */}
+            <div className="cards">
+              {userList.map((list, index) => {
+                return (
+                  <Usercard
+                    key={index}
+                    clubName={list.name}
+                    clubPrice={list.price}
+                    subscribeToClub={subscribeToClub}
+                  />
+                );
+              })}
+            </div>
           </Route>
           <Route exact path="/:user/files">
-            {/* */}
-            <Flex>
+            <div className="cards">
+              {/* {map with array of clubs of members with props} */}
               <Files />
-            </Flex>
+            </div>
           </Route>
         </Switch>
       </Flex>
