@@ -203,7 +203,7 @@ export default function Hero({ subscribeToClub, createClub, currentAccount }) {
       <Flex align="center" justifyContent="center">
         <Box
           mt="8%"
-          maxW="1200px"
+          w="1200px"
           minH="100vh"
           className="gradient"
           rounded="1rem"
