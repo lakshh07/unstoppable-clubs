@@ -34,6 +34,7 @@ function UserCard({
   clubName,
   clubPrice,
   totalMembership,
+  onViewPosts
 }) {
   return (
     <div className="cards">
@@ -79,14 +80,14 @@ function UserCard({
                   boxShadow: "lg",
                 }}
                 onClick={() => {
-                  subscribeToClub(lockAddress, pubKey);
+                  subscribeToClub();
                 }}
               >
                 Subscribe
               </Button>
             </Route>
             <Route exact path="/clubs">
-              <Link to={`/${clubName}/files`}>
+              <Link to={`/${lockAddress}/posts`}>
                 <Button
                   fontSize={"sm"}
                   rounded={"full"}
@@ -98,6 +99,11 @@ function UserCard({
                   _hover={{
                     transform: "translateY(-2px)",
                     boxShadow: "lg",
+                  }}
+                  onClick={() => {
+                    if(onViewPosts) {
+                      onViewPosts();
+                    }
                   }}
                 >
                   View Files

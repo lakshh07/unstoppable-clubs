@@ -44,7 +44,7 @@ export default function Hero({ currentAccount, clubService, graphService }) {
   const [accountClub, setAccountClub] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [allClubs, setClubs] = useState([]);
-  const [subClubSet, setSubClubs] = useState([]);
+  const [subClubSet, setSubClubs] = useState(new Set());
   const [transHash, setTransHash] = useState();
   const toast = useToast();
 
@@ -262,7 +262,7 @@ export default function Hero({ currentAccount, clubService, graphService }) {
           </Heading>
           <Flex justify-content="center" mr="10px">
             <div className="cards">
-              {allClubs
+              {subClubSet && allClubs? allClubs
                 .filter((c) => !subClubSet.has(c.address))
                 .map((club, index) => (
                   <ClubCard
@@ -281,7 +281,7 @@ export default function Hero({ currentAccount, clubService, graphService }) {
                       console.log(transHash);
                     }}
                   ></ClubCard>
-                ))}
+                )):null}
               {/* {transHash === undefined
                 ? toast({
                     position: "top-right",

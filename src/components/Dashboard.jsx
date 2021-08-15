@@ -32,6 +32,7 @@ import {
   bytesToHex,
   createDocFromMembersList,
   decryptUsingMetamask,
+  getPubKeyFromMetamask
 } from "../utils/utils";
 import GraphiQL from "graphiql";
 
@@ -50,6 +51,9 @@ export default function Dashboard({
   const [showCC, setShowCC] = useState(false);
   const [clubPosts, setClubPosts] = useState([]);
   const [allClubs, setAllClubs] = useState([]);
+  const [selectedClub, setSelectedClub] = useState(null);
+  const [selectedClubPosts, setSelectedClubPosts] = useState([]);
+  const [transHash, setTransHash] = useState();
   let { user } = useParams();
 
   useEffect(async () => {
@@ -65,9 +69,16 @@ export default function Dashboard({
   }, [clubAddress]);
 
   useEffect(async () => {
-    const clubs = await graphService.fetchAllClubsOfMember(currentAccount);
+    const clubs = await graphService.fetchClubsOfMember(currentAccount);
     setAllClubs(clubs);
   }, [currentAccount]);
+
+  useEffect(async () => {
+    if(selectedClub) {
+      let cp = await graphService.fetchPostsForClub(selectedClub);
+      setSelectedClubPosts(cp);
+    }
+  }, [selectedClub]);
 
   const onCreateClub = async (memberPriceInEth, clubName, totalMembers) => {
     const lockAddress = await clubService.createClub(
@@ -77,6 +88,10 @@ export default function Dashboard({
     );
     return lockAddress;
   };
+
+  const onClubSelected = (scAddress) => {
+    setSelectedClub(scAddress);
+  }
 
   const publishPostFlow = async (fileObject, fileName) => {
     const fileBuffer = await fileObject.arrayBuffer();
@@ -110,14 +125,15 @@ export default function Dashboard({
   };
 
   const fetchPostFlow = async (jsonDocPath) => {
+    const memberAddress = currentAccount.toLowerCase();
     const jsonDocStr = await textileService.fetchPathFromTextile(jsonDocPath);
     const jsonDoc = JSON.parse(jsonDocStr);
-    if (!jsonDoc["memberAccess"][currentAccount]) {
+    if (!jsonDoc["memberAccess"][memberAddress]) {
       alert("YOU ARE NOT A MEMBER");
       return false;
     }
     console.log("JSON RECOVERED", jsonDoc);
-    const strToDecrypt = jsonDoc["memberAccess"][currentAccount];
+    const strToDecrypt = jsonDoc["memberAccess"][memberAddress];
     const encryptionKeyHex = await decryptUsingMetamask(strToDecrypt);
     let decryptionKey = new Uint8Array(hexToBytes(encryptionKeyHex)).buffer;
     decryptionKey = await crypto.subtle.importKey(
@@ -247,7 +263,7 @@ export default function Dashboard({
                   onClose={onClose}
                 />
               </Route>
-              <Route exact path="/:user/files">
+              <Route exact path="/:user/posts">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
                   <Icon
                     as={BsFiles}
@@ -311,7 +327,7 @@ export default function Dashboard({
             <Route exact path="/allclubs">
               All Clubs
             </Route>
-            <Route exact path="/:user/files">
+            <Route exact path="/:user/posts">
               {user}'s Files
             </Route>
           </Heading>
@@ -323,9 +339,19 @@ export default function Dashboard({
                 return (
                   <Usercard
                     key={index}
+                    lockAddress={list.address}
                     clubName={list.name}
                     clubPrice={list.price}
                     totalMembership={"100"}
+                    subscribeToClub={async () => {
+                      let pubkey = await getPubKeyFromMetamask();
+                      const hash = await clubService.subscribeToClub(
+                        list.address,
+                        pubkey
+                      );
+                      setTransHash(hash);
+                      console.log(transHash);
+                    }}
                   />
                 );
               })}
@@ -338,25 +364,32 @@ export default function Dashboard({
                 return (
                   <Usercard
                     key={index}
+                    lockAddress={list.address}
                     clubName={list.name}
                     clubPrice={list.price}
+                    onViewPosts={() => {
+                      onClubSelected(list.address);
+                    }}
                   />
                 );
               })}
             </div>
           </Route>
-          <Route exact path="/:user/files">
+          <Route exact path="/:user/posts">
             <div className="cards">
-              {/* {map with array of clubs of members with props} */}
-              <Files />
+            {selectedClubPosts.map((cp) => (
+                  <Files
+                    key={cp.filepath}
+                    fileName={cp.filepath}
+                    filePath={cp.filepath}
+                    decryptFile={async () => {
+                      return await fetchPostFlow(cp.filepath);
+                    }}
+                  />)
+                  )}
             </div>
           </Route>
           <Route exact path="/dashboard">
-          <div style={{ width: 780, margin: "auto", paddingBottom: 64 }}>
-          <div style={{ margin: 32, height: 400, border: "1px solid #888888", textAlign: "left" }}>
-            <GraphiQL fetcher={graphService.fetcher} docExplorerOpen query={`{}`} />
-          </div>
-          </div>
           { !clubAddress ? <Button colorScheme="blue" onClick={() => {
             setShowCC(true);
           }
@@ -414,7 +447,7 @@ export default function Dashboard({
                         boxShadow: "lg",
                       }}
                     >
-                      Create New File
+                      Create New Post
                     </Button>
                   </Flex>{" "}
                 </Box>

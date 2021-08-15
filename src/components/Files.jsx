@@ -15,18 +15,25 @@ export default function Files({ fileName, filePath, decryptFile }) {
   const [fileType, setFileType] = useState("encrypted");
   const onDecryptClicked = async () => {
     const fileBuffer = await decryptFile();
-    const fileextention = fileName.slice(-6, -3);
-    if (fileextention == "png") {
-      const base64image = Buffer.from(fileBuffer).toString("base64");
-      setDecryptedContent(base64image);
-      setFileType("image");
-    } else if (fileextention == "txt") {
-      setDecryptedContent(new TextDecoder().decode(fileBuffer));
-      setFileType("text");
+    if(fileBuffer) {
+
+      const fileextention = fileName.slice(-6, -3);
+      if (fileextention == "png") {
+        const base64image = Buffer.from(fileBuffer).toString("base64");
+        setDecryptedContent(base64image);
+        setFileType("image");
+      } else if (fileextention == "txt") {
+        setDecryptedContent(new TextDecoder().decode(fileBuffer));
+        setFileType("text");
+      } else {
+        setFileType("undisplay");
+        setDecryptedContent(fileBuffer);
+      }
     } else {
       setFileType("undisplay");
-      setDecryptedContent(fileBuffer);
+      setDecryptedContent("");
     }
+    
   };
   return (
     <div className="cards">

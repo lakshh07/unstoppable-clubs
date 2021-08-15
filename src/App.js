@@ -43,7 +43,8 @@ function App() {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
-    setCurrentAccount(ethers.utils.getAddress(accounts[0]));
+    let ca = ethers.utils.getAddress(accounts[0]);
+    setCurrentAccount(ca);
     const mprovider = await getMetamaskProvider();
     setProvider(mprovider);
     setSigner(mprovider.getSigner());
@@ -53,7 +54,7 @@ function App() {
     let tService = new TextileService();
     await tService.init();
     setTextileService(tService);
-    const club = await gService.fetchOwnedClub();
+    const club = await gService.fetchOwnedClub(ca);
     setOwnedClub(club);
   };
 
@@ -145,7 +146,7 @@ function App() {
             clubService={clService}
           />
         </Route>
-        <Route exact path="/dashboard">
+        <Route exact path={["/dashboard", "/:user/posts", "/clubs", "/allclubs"]}>
           <Dashboard
             provider={mProvider}
             signer={mSigner}
@@ -155,33 +156,6 @@ function App() {
             clubService={clService}
             graphService={gService}
             textileService={textileService}
-          />
-        </Route>
-        <Route exact path="/:user/files">
-          <Dashboard
-            provider={mProvider}
-            signer={mSigner}
-            currentAccount={currentAccount}
-            clubService={clService}
-            graphService={gService}
-          />
-        </Route>
-        <Route exact path="/clubs">
-          <Dashboard
-            provider={mProvider}
-            signer={mSigner}
-            currentAccount={currentAccount}
-            clubService={clService}
-            graphService={gService}
-          />
-        </Route>
-        <Route exact path="/allclubs">
-          <Dashboard
-            provider={mProvider}
-            signer={mSigner}
-            currentAccount={currentAccount}
-            clubService={clService}
-            graphService={gService}
           />
         </Route>
       </Router>

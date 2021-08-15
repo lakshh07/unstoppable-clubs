@@ -28,9 +28,9 @@ export default class ClubService {
           lockAddress:lockAddress,
           data: Buffer.from(pubkey)
         }, (error, hash) =>{
-          alert('tx', hash);
+          console.log('IN ERROR', error, hash);
         });
-        alert(`key purchased ${transactionHash}`)
+        console.log('SUBSCRIBE TO CLUB', lockAddress, pubkey, transactionHash)
         return transactionHash;
       }
     
