@@ -2,17 +2,18 @@ import hc from '../contracts/hardhat_contracts'
 import  { WalletService } from '@unlock-protocol/unlock-js';
 import config from '../config'
 import { ethers } from 'ethers';
+const PostContract = hc['1337']['localhost']['contracts']['PublicLockPosts'];
 
 export default class ClubService {
     constructor(){
         
     }
 
-    async init(signer) {
-        const PostContract = hc['1337']['localhost']['contracts']['PublicLockPosts'];
-        this.postContract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
+    async init(mprovider) {
+        
+        this.postContract = new ethers.Contract(PostContract.address, PostContract.abi, mprovider.getSigner());
         this.walletService = new WalletService({'1337': {provider: 'http://127.0.0.1:7545', unlockAddress: config.unlockAddress},'5777': {provider: 'http://127.0.0.1:7545', unlockAddress: config.unlockAddress}});
-        await this.walletService.connect(signer);
+        await this.walletService.connect(mprovider);
     }
 
     async createClub(memberPriceInEth, clubName, totalMembers) {
@@ -36,5 +37,11 @@ export default class ClubService {
         const th = await this.subscribeToClub(la);
         console.log('ALL DONE', la, th)
       }
+
+    async publishOnChain(clubAddress, fileName, jsonDocPath) {
+      const postId  = await this.postContract.publishPost(clubAddress, `${fileName},${jsonDocPath}`);
+      console.log('POST PUBLISHED', postId);
+      return postId;
+    }
 
 }

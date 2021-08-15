@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&family=Caveat&display=swap");
 
+* {
+  box-sizing: border-box;
+}
 html,
 body {
   padding: 0;
@@ -8,38 +11,46 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   overflow-x: hidden;
 }
-
-@media only screen and (min-width: 768px) {
-  .hero::before {
-    content: "";
-    display: block;
-    position: absolute;
-    background: url(./images/bg_gradient__main-header.svg) no-repeat top
-      center/1095px;
-    width: 1200px;
-    height: 100%;
-    -webkit-transform: translate(-22%, -50%);
-    -ms-transform: translate(-22%, -50%);
-    transform: translate(-22%, -50%);
-    left: 50%;
-    top: 50%;
-    z-index: -1;
-    max-width: 1095px;
-  }
-}
-
 .footer {
-  background-color: blue;
-  background: url(./images/bg__gradient__blue.svg) no-repeat 10% 80%;
   width: 90%;
   z-index: 1;
   border-top-right-radius: 100px;
   left: 0;
+  background: url(./images/bg__with-dotted.svg) no-repeat right,
+    hsla(262, 98%, 62%, 1);
+
+  background: url(./images/bg__with-dotted.svg) no-repeat right,
+    linear-gradient(
+      135deg,
+      hsla(262, 98%, 62%, 1) 37%,
+      hsla(178, 64%, 65%, 1) 100%
+    );
+
+  background: url(./images/bg__with-dotted.svg) no-repeat right,
+    -moz-linear-gradient(135deg, hsla(262, 98%, 62%, 1) 37%, hsla(
+            178,
+            64%,
+            65%,
+            1
+          )
+          100%);
+
+  background: url(./images/bg__with-dotted.svg) no-repeat right,
+    -webkit-linear-gradient(135deg, hsla(262, 98%, 62%, 1) 37%, hsla(
+            178,
+            64%,
+            65%,
+            1
+          )
+          100%);
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#843DFD", endColorstr="#6BDFDB", GradientType=1 );
 }
 .foot {
-  background: url(./images//bg__with-dotted.svg) no-repeat right;
+  z-index: 999 !important;
+  border-top-right-radius: 100px;
+  background-image: url(./images/bg__with-dotted.svg) no-repeat right;
 }
-
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -106,13 +117,15 @@ a {
   color: inherit;
   text-decoration: none;
 }
-
-* {
-  box-sizing: border-box;
-}
-
 .sidebar-items:not(:last-child) {
   margin-bottom: 1.5em;
+}
+.sidebar-items {
+  color: gray;
+  font-size: large;
+}
+.sidebar-items p {
+  margin-left: 1em;
 }
 
 @media only screen and (max-width: 767px) {
@@ -120,12 +133,39 @@ a {
     margin-bottom: 0 !important;
   }
 }
-
-.sidebar-items {
-  color: gray;
-  font-size: large;
+@media only screen and (min-width: 1300px) {
+  .hero::before {
+    content: "";
+    display: block;
+    position: absolute;
+    background: url(./images/bg_gradient__main-header.svg) no-repeat top
+      center/1095px;
+    width: 1200px;
+    height: 100%;
+    -webkit-transform: translate(-22%, -50%);
+    -ms-transform: translate(-22%, -50%);
+    transform: translate(-22%, -50%);
+    top: 50%;
+    right: -30%;
+    z-index: -1;
+    max-width: 1095px;
+  }
 }
-
-.sidebar-items p {
-  margin-left: 1em;
+@media only screen and (max-width: 1300px) {
+  .hero::before {
+    content: "";
+    display: block;
+    position: absolute;
+    background: url(./images/bg_gradient__main-header.svg) no-repeat top
+      center/1095px;
+    width: 1200px;
+    height: 100%;
+    -webkit-transform: translate(-22%, -50%);
+    -ms-transform: translate(-22%, -50%);
+    transform: translate(-22%, -50%);
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+    max-width: 1095px;
+  }
 }

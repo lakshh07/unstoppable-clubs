@@ -25,8 +25,11 @@ import svgAvatarGenerator from "../utils/avatar";
 import Usercard from "./Usercard";
 import Files from "./Files";
 import CreateFile from "./Createfile";
-import { fetchClubOfAddress,publishPostFlow } from '../utils/utils'
 import CreateClub from "./CreateClub";
+import { encryptBuffer, bytesToHex, createDocFromMembersList } from '../utils/utils';
+
+
+
 
 export default function Dashboard({
   currentAccount,
@@ -34,8 +37,9 @@ export default function Dashboard({
   signer,
   clubService,
   graphService,
+  textileService,
   clubAddress,
-  clubName
+  clubName,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
@@ -87,6 +91,27 @@ export default function Dashboard({
       amount: "10",
     },
   ];
+
+  const publishPostFlow = async (fileObject, fileName) => {
+    const fileBuffer = await fileObject.arrayBuffer();
+    const encryptedBuffer = await encryptBuffer(fileBuffer);
+    
+    const uploadedStatus  = await textileService.uploadToTextile(encryptedBuffer.encryptedData,`${clubName}/${fileName}`);
+    const members = await graphService.fetchMembersOfClub(clubAddress);
+    console.log('UPLOADED TO TEXTIE', uploadedStatus);
+    const arrayBuffer = await crypto.subtle.exportKey("raw",encryptedBuffer.encryptionKey);
+    const ekeyhex = bytesToHex(new Uint8Array(arrayBuffer));
+    
+    const jsonDoc = createDocFromMembersList(members, ekeyhex);
+    jsonDoc['iv'] = encryptedBuffer.iv;
+    console.log("MATCH HEX", encryptedBuffer.iv);
+    jsonDoc['filePath'] = `${clubName}/${fileName}`
+    const jsonDocPath = `${clubName}/${fileName}_md`;
+    const finalPath = await textileService.uploadJson(jsonDoc, jsonDocPath);
+    console.log('JSON FILE UPLOAED ', finalPath);
+    const postId = await clubService.publishOnChain(clubAddress, fileName, jsonDocPath);
+    return postId;
+  }
 
   return (
     <Flex
@@ -175,15 +200,15 @@ export default function Dashboard({
                         boxShadow: "lg",
                       }}
                     >
-                      Create New File
+                      Create New Post
                     </Button>
-                    <CreateFile
-                      publishPostFlow={publishPostFlow}
-                      isOpen={isOpen}
-                      onClose={onClose}
-                    />
                   </div>
                 ) : null}
+                <CreateFile
+                  publishPostFlow={publishPostFlow}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                />
               </Route>
               <Route exact path="/:user/files">
                 <Flex className="sidebar-items" mr={[2, 6, 0, 0, 0]}>
@@ -286,6 +311,7 @@ export default function Dashboard({
             createClub={onCreateClub}
             onClose={() => { setShowCC(false);}}
            ></CreateClub>
+
             {filesAvailable ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}

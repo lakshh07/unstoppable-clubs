@@ -15,15 +15,17 @@ import Hero from "./components/Hero";
 import { EPERM } from "constants";
 import ClubService from "./utils/ClubService";
 import GraphService from "./utils/GraphService";
+import TextileService from "./utils/TextileService";
 
 const getMetamaskProvider = async () => {
-  if(window.ethereum){
-    await window.ethereum.enable()
+  if (window.ethereum) {
+    await window.ethereum.enable();
     return new ethers.providers.Web3Provider(window.ethereum);
   } else {
     return null;
   }
-}
+
+};
 const gService = new GraphService();
 
 function App() {
@@ -31,11 +33,12 @@ function App() {
   const [chainId, setChainId] = useState();
   const [walletService, setWalletService] = useState();
   const [buckets, setBuckets] = useState();
-  const  [mProvider, setProvider] = useState();
+  const [mProvider, setProvider] = useState();
   const [mSigner, setSigner] = useState();
   const [clService, setClubService] = useState();
   // const [gService, setgService] = useState();
-  
+  const [textileService, setTextileService] = useState();
+  const [ownedClub, setOwnedClub] = useState({});
   
 
   const getCurrentAccount = async () => {
@@ -49,7 +52,11 @@ function App() {
     let cService = new ClubService();
     await cService.init(mprovider);
     setClubService(cService);
-    
+    let tService = new TextileService();
+    await tService.init();
+    setTextileService(tService);
+    const club = await gService.fetchOwnedClub();
+    setOwnedClub(club);
   };
 
   useEffect(() => {
@@ -67,8 +74,6 @@ function App() {
       });
     }
 
-    // initBucket();
-    // initWC();
   }, [currentAccount]);
 
   useEffect(async () => {
@@ -122,9 +127,8 @@ function App() {
               </Alert>
             ) : chainId === "137" ||
               chainId === "80001" ||
-
-              chainId === "1337" || chainId === "5777"? null : (
-
+              chainId === "1337" ||
+              chainId === "5777" ? null : (
               <Alert status="warning" justifyContent="center">
                 <AlertIcon />
                 <AlertTitle mr={2}>Network Not Supported!</AlertTitle>
@@ -148,17 +152,29 @@ function App() {
           <Dashboard
             provider={mProvider}
             signer={mSigner}
+            clubAddress={ownedClub.address}
+            clubName={ownedClub.name}
             currentAccount={currentAccount}
             clubService={clService}
             graphService={gService}
+            textileService={textileService}
           />
         </Route>
         <Route exact path="/:user/files">
+          <Dashboard
             provider={mProvider}
             signer={mSigner}
-          <Dashboard currentAccount={currentAccount} />
+            currentAccount={currentAccount}
+          />
         </Route>
         <Route exact path="/clubs">
+          <Dashboard
+            provider={mProvider}
+            signer={mSigner}
+            currentAccount={currentAccount}
+          />
+        </Route>
+        <Route exact path="/allclubs">
           <Dashboard
             provider={mProvider}
             signer={mSigner}

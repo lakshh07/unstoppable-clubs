@@ -47,9 +47,9 @@ export default function CreateFile({ isOpen, onClose, publishPostFlow }) {
     changeLoading();
     const uploadStatus = await publishPostFlow(
       file,
-      name,
-      "0xDF51b83D026DFcA0F3141e76D2D882e5FB29138f",
-      "Sandy"
+      name
+      // "0xDF51b83D026DFcA0F3141e76D2D882e5FB29138f",
+      // "Sandy"
     );
     if (uploadStatus) {
       setTransactionLoading(false);

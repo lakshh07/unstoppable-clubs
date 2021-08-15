@@ -43,12 +43,15 @@ export default function Hero({ currentAccount, clubService, graphService }) {
   const [accountClub, setAccountClub] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [allClubs, setClubs ] = useState([]);
+  const [subClubSet, setSubClubs ] = useState([]);
 
   useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
     let aClub = fetchAccountClub(currentAccount);
     setAccountClub(aClub);
+    let subscribedClubs = await graphService.fetchClubsOfMember(currentAccount);
+    setSubClubs(new Set(subscribedClubs.map(c => c.address)));
   }, [currentAccount]);
 
   useEffect(async () => {
@@ -138,7 +141,7 @@ export default function Hero({ currentAccount, clubService, graphService }) {
         direction={{ base: "column-reverse", md: "row" }}
         wrap="no-wrap"
         minH="90vh"
-        px={20}
+        mx={20}
         mt={-4}
       >
         <Stack
@@ -258,7 +261,7 @@ export default function Hero({ currentAccount, clubService, graphService }) {
           <Flex justify-content="center" mr="10px">
             <div className="cards">
               { 
-              allClubs.map((club) => <ClubCard clubName={club.name} lockAddress={club.address} clubPrice={club.price} totalMembership={"100"} subscribeToClub={async () => {
+              allClubs.filter(c => !subClubSet.has(c.address)).map((club) => <ClubCard clubName={club.name} lockAddress={club.address} clubPrice={club.price} totalMembership={"100"} subscribeToClub={async () => {
                 let pubkey = await getPubKeyFromMetamask();
                 clubService.subscribeToClub(club.address, pubkey);
               }}></ClubCard>) 
