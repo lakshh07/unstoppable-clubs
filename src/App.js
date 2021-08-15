@@ -152,8 +152,8 @@ function App() {
           <Dashboard
             provider={mProvider}
             signer={mSigner}
-            clubAddress={ownedClub.address}
-            clubName={ownedClub.name}
+            clubAddress={ownedClub ? ownedClub.address: null}
+            clubName={ownedClub? ownedClub.name: null}
             currentAccount={currentAccount}
             clubService={clService}
             graphService={gService}

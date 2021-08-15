@@ -12,7 +12,7 @@ const graphQLFetcher =  (graphQLParams) => {
 export default class GraphService {
 
     constructor(){
-
+      this.fetcher = graphQLFetcher;
     }
 
     async fetchClubs() {
@@ -37,6 +37,11 @@ export default class GraphService {
                 name: "SECOND BEST",
                 address:"0x84b222F577F99E07C0f7F7D91fBBb67d051E5229",
                 price: "0.1"
+            },
+            {
+              name: "third Club",
+              address: "0xd1F90d85a4a99D7042F6C601407Aa1E9f0E7CEB6",
+              price: "0.1"
             }
         ]
     }
@@ -66,10 +71,10 @@ export default class GraphService {
     }
 
     async fetchOwnedClub(ownerAddress) {
-      return { 
-          name: "BEST CLUB",
-          address: "0x814002Ca045c012E396273305150042b58BA06E3"
-        };
+      return {
+        name: "third Club",
+        address: "0xd1F90d85a4a99D7042F6C601407Aa1E9f0E7CEB6"
+      };
     }
 
     async fetchAllClubsOfMember  (memberAddress) {

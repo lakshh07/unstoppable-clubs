@@ -18,6 +18,8 @@ export default class ClubService {
 
     async createClub(memberPriceInEth, clubName, totalMembers) {
         const lockAddress = await this.walletService.createLock({maxNumberOfKeys: totalMembers, name: clubName, expirationDuration: 12121311, keyPrice: memberPriceInEth})
+        const lockContract = await this.walletService.getLockContract(lockAddress);
+        await lockContract.setEventHooks(PostContract.address,"0x0000000000000000000000000000000000000000")
         return lockAddress;
     }
 
