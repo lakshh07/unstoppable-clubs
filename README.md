@@ -1,4 +1,4 @@
-#Unstoppable Clubs UI 
+# Unstoppable Clubs UI 
 create clubs on the blockchain and publish uncensorable content
 
 ## For the graph and smart contract
