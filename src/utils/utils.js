@@ -61,16 +61,20 @@ const mergeUint8Arr = (myArrays) => {
     return pubKey;
   }
 
-  const encryptWithPubKey = async (pubkey, str) => {
+  const encryptWithPubKey = (pubkey, str) => {
     const encryptedData = ethSigEncrypt(pubkey, {data: str },'x25519-xsalsa20-poly1305');
+    console.log('encryptWithPubKey',pubkey, str, encryptedData);
     return encryptedData;
   }
 
 
-  const decryptUsingMetamask = async (encryptedStr) => {
+  const decryptUsingMetamask = async (encryptedStr, accountAddress) => {
+    if(!accountAddress){
+      accountAddress = ethereum.selectedAddress;
+    }
     const plainText = await ethereum.request({
         'method':'eth_decrypt',
-        'params': [encryptedStr, ethereum.selectedAddress]
+        'params': [encryptedStr, accountAddress]
     });
     return plainText;
   }
@@ -80,6 +84,7 @@ const mergeUint8Arr = (myArrays) => {
     finalDoc['memberAccess'] = {};
     for(let m of members) {
       const memberHash = hexlifyStr(encryptWithPubKey(m.pubkey, secretKey));
+      console.log('MemberHash after hexlify', memberHash);
       finalDoc['memberAccess'][m.address] = memberHash;
     }
     return finalDoc;
@@ -91,8 +96,11 @@ const mergeUint8Arr = (myArrays) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const hexlifyStr = (str) => {
-    return utils.hexlify(Buffer.from(JSON.stringify(str)));
+  const hexlifyStr = (jsonObj) => {
+    const jsonStr = JSON.stringify(jsonObj);
+    const strToHex = Buffer.from(jsonStr);
+    const finalHex = utils.hexlify(strToHex);
+    return finalHex;
   }
 
 
@@ -112,9 +120,6 @@ function bytesToHex(bytes) {
   }
   return hex.join("");
 }
-
- 
-
  
 
   const testEncryption = async () => {
@@ -148,38 +153,6 @@ function bytesToHex(bytes) {
   }
 
 
-
-  const fetchPostFlow = async (ts,clubAddress,clubName) => {
-    const myAddress = await ethereum.request({'method': 'eth_requestAccounts'});
-    // const PostContract = require("../contracts/hardhat_contracts.json")['1337']['localhost']['contracts']['PublicLockPosts']
-    // const contract = new ethers.Contract(PostContract.address, PostContract.abi, signer);
-    const postURI = ""//await contract.lastTokenURI();
-    const jsonDocPath = postURI.split(',')[1]
-    const jsonDocStr = await ts.fetchPathFromTextile(jsonDocPath)
-    const jsonDoc = JSON.parse(jsonDocStr);
-    const strToDecrypt = jsonDoc['memberAccess'][myAddress[0]];
-    const encryptionKeyHex = await decryptUsingMetamask(strToDecrypt);
-    let decryptionKey = new Uint8Array(hexToBytes(encryptionKeyHex)).buffer;
-    decryptionKey = await crypto.subtle.importKey('raw', decryptionKey, { 'name': 'AES-CBC', 'length': 256 }, true, ['encrypt', 'decrypt']);
-    let filesInIPFS = await ts.fetchPathFromTextile(jsonDoc.filePath, false);
-    let fileInIPFS = filesInIPFS;
-    let ivarr = []
-    for(let i of Object.keys(jsonDoc.iv)){ 
-      ivarr[i] = jsonDoc.iv[i]
-    }
-    const iv = new Uint8Array(ivarr);
-    console.log('MATCH FILE LENGTH', fileInIPFS.byteLength)
-    const fileAsBuffer = await crypto.subtle.decrypt({
-      name: "AES-CBC",
-      length: 256,
-      iv: iv
-    }, decryptionKey, fileInIPFS);
-    
-
-    console.log('DECRYPT', fileAsBuffer);
-    
-  }
-
   export {
-    getPubKeyFromMetamask, mergeUint8Arr, encryptBuffer, createDocFromMembersList, bytesToHex
+    getPubKeyFromMetamask, mergeUint8Arr, encryptBuffer, createDocFromMembersList, bytesToHex, decryptUsingMetamask, hexToBytes
   }

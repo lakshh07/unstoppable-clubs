@@ -1,12 +1,30 @@
 import React, { useState } from "react";
-import { Heading, Box, Center, Button, Flex } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Heading, Box, Center, Button, Flex, Text, Image } from "@chakra-ui/react";
+import { Buffer } from 'buffer';
 
-export default function Files({ fileName }) {
+export default function Files({ fileName,filePath,decryptFile }) {
+  const [decryptedContent, setDecryptedContent] = useState();
+  const [fileType, setFileType] = useState('encrypted');
+  const onDecryptClicked = async () => {
+      const fileBuffer = await decryptFile();
+      const fileextention = fileName.slice(-6, -3);
+      if(fileextention == 'png') {
+        const base64image = Buffer.from(fileBuffer).toString('base64');
+        setDecryptedContent(base64image);
+        setFileType('image');
+      } else if (fileextention == 'txt') {
+        setDecryptedContent(new TextDecoder().decode(fileBuffer));
+        setFileType('text');
+      } else {
+        setFileType('undisplay');
+        setDecryptedContent(fileBuffer);
+      }
+  }
   return (
     <div className="cards">
       <div className="cards__item">
         <Center p={4} m={4}>
+          {fileType == 'encrypted' ?
           <Box
             w={"250px"}
             h={"150px"}
@@ -41,6 +59,9 @@ export default function Files({ fileName }) {
                       transform: "translateY(-2px)",
                       boxShadow: "lg",
                     }}
+                    onClick={
+                      onDecryptClicked
+                    }
                   >
                     View
                   </Button>
@@ -48,6 +69,11 @@ export default function Files({ fileName }) {
               </div>
             </div>
           </Box>
+           : <Text>{fileName}</Text> }
+           { decryptedContent && fileType == 'image'? <Image src={`data:image/png;base64,${decryptedContent}`}></Image> :  null}
+           { decryptedContent && fileType == 'text'? <Text>{decryptedContent}</Text> :  null}
+           { decryptedContent && fileType == 'undisplay'? <Text>{"Not able to display this file"}</Text> :  null}
+
         </Center>
       </div>
     </div>

@@ -26,7 +26,7 @@ import Usercard from "./Usercard";
 import Files from "./Files";
 import CreateFile from "./Createfile";
 import CreateClub from "./CreateClub";
-import { encryptBuffer, bytesToHex, createDocFromMembersList } from '../utils/utils';
+import { encryptBuffer, hexToBytes, bytesToHex, createDocFromMembersList, decryptUsingMetamask } from '../utils/utils';
 
 
 
@@ -43,8 +43,9 @@ export default function Dashboard({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
-  const [filesAvailable, setFilesAvailable] = useState(false);
   const [showCC, setShowCC ] = useState(false);
+  const [clubPosts, setClubPosts ] = useState([]);
+  const [allClubs, setAllClubs ] = useState([]);
   let { user } = useParams();
 
   useEffect(async () => {
@@ -52,45 +53,22 @@ export default function Dashboard({
     setAvatar(svg);
   }, [currentAccount, user]);
 
+  useEffect(async () => {
+    if(clubAddress) {
+       const clubp = await graphService.fetchPostsForClub(clubAddress);
+       setClubPosts(clubp);
+    }
+  }, [clubAddress])
+
+  useEffect(async () => {
+      const clubs = await graphService.fetchAllClubsOfMember(currentAccount);
+      setAllClubs(clubs);
+  }, [currentAccount]);
+
   const onCreateClub = async (memberPriceInEth, clubName, totalMembers) => {
     const lockAddress = await clubService.createClub(memberPriceInEth, clubName, totalMembers);
     return lockAddress;
   }
-
-  const userList = [
-    {
-      id: "1",
-      profileImg:
-        "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-      name: "Lindsey James",
-      description: "Musician, PM for work inquires or me in your posts",
-      amount: "5",
-    },
-    {
-      id: "2",
-      profileImg:
-        "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-      name: "Soraya Naomi",
-      description: "Model",
-      amount: "10",
-    },
-    {
-      id: "3",
-      profileImg:
-        "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-      name: "Lindsey James",
-      description: "Musician, PM for work inquires or me in your posts",
-      amount: "5",
-    },
-    {
-      id: "4",
-      profileImg:
-        "https://preview.redd.it/ebdrp8c79nk61.jpg?width=640&crop=smart&auto=webp&s=b5a600b4173eba4cf98cef644f320d351ee279c6",
-      name: "Soraya Naomi",
-      description: "Model",
-      amount: "10",
-    },
-  ];
 
   const publishPostFlow = async (fileObject, fileName) => {
     const fileBuffer = await fileObject.arrayBuffer();
@@ -111,6 +89,36 @@ export default function Dashboard({
     console.log('JSON FILE UPLOAED ', finalPath);
     const postId = await clubService.publishOnChain(clubAddress, fileName, jsonDocPath);
     return postId;
+  }
+
+  const fetchPostFlow = async (jsonDocPath) => {
+
+    const jsonDocStr = await textileService.fetchPathFromTextile(jsonDocPath)
+    const jsonDoc = JSON.parse(jsonDocStr);
+    if(!jsonDoc['memberAccess'][currentAccount])  {
+      alert('YOU ARE NOT A MEMBER');
+      return false;
+    }
+    console.log('JSON RECOVERED',jsonDoc);
+    const strToDecrypt = jsonDoc['memberAccess'][currentAccount];
+    const encryptionKeyHex = await decryptUsingMetamask(strToDecrypt);
+    let decryptionKey = new Uint8Array(hexToBytes(encryptionKeyHex)).buffer;
+    decryptionKey = await crypto.subtle.importKey('raw', decryptionKey, { 'name': 'AES-CBC', 'length': 256 }, true, ['encrypt', 'decrypt']);
+    let filesInIPFS = await textileService.fetchPathFromTextile(jsonDoc.filePath, false);
+    let fileInIPFS = filesInIPFS;
+    let ivarr = []
+    for(let i of Object.keys(jsonDoc.iv)){ 
+      ivarr[i] = jsonDoc.iv[i]
+    }
+    const iv = new Uint8Array(ivarr);
+    const fileAsBuffer = await crypto.subtle.decrypt({
+      name: "AES-CBC",
+      length: 256,
+      iv: iv
+    }, decryptionKey, fileInIPFS);
+    
+    return fileAsBuffer;
+    
   }
 
   return (
@@ -189,7 +197,7 @@ export default function Dashboard({
                 </Link>
               </Route>
               <Route exact path="/dashboard">
-                {filesAvailable ? (
+                {clubPosts.length > 0 ? (
                   <div>
                     <Button
                       align="center"
@@ -255,7 +263,7 @@ export default function Dashboard({
         <Flex p="0 5px" alignItems="center" justifyContent="space-between">
           <Heading fontWeight="normal" mb={4} letterSpacing="tight">
             <Route exact path="/dashboard">
-              Your Files
+              {clubName} -  {clubAddress}
             </Route>
             <Route exact path="/clubs">
               Your Clubs
@@ -271,7 +279,7 @@ export default function Dashboard({
         <Switch>
           <Route exact path="/allclubs">
             <div className="cards">
-              {userList.map((list, index) => {
+              {allClubs.map((list, index) => {
                 return (
                   <Usercard
                     key={index}
@@ -285,7 +293,7 @@ export default function Dashboard({
           <Route exact path="/clubs">
             {/* {map with array of clubs of members with props} */}
             <div className="cards">
-              {userList.map((list, index) => {
+              {allClubs.map((list, index) => {
                 return (
                   <Usercard
                     key={index}
@@ -312,10 +320,12 @@ export default function Dashboard({
             onClose={() => { setShowCC(false);}}
            ></CreateClub>
 
-            {filesAvailable ? (
+            {clubPosts.length > 0 ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}
-                <Files />
+                {clubPosts.map((cp) => <Files key={cp.filepath} fileName={cp.filepath} filePath={cp.filepath} decryptFile={async () => {
+                   return await fetchPostFlow(cp.filepath);
+                }}/>)}
               </div>
             ) : (
               <Flex

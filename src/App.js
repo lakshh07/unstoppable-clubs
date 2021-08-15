@@ -165,6 +165,8 @@ function App() {
             provider={mProvider}
             signer={mSigner}
             currentAccount={currentAccount}
+            clubService={clService}
+            graphService={gService}
           />
         </Route>
         <Route exact path="/clubs">
@@ -172,6 +174,8 @@ function App() {
             provider={mProvider}
             signer={mSigner}
             currentAccount={currentAccount}
+            clubService={clService}
+            graphService={gService}
           />
         </Route>
         <Route exact path="/allclubs">
@@ -179,6 +183,8 @@ function App() {
             provider={mProvider}
             signer={mSigner}
             currentAccount={currentAccount}
+            clubService={clService}
+            graphService={gService}
           />
         </Route>
       </Router>

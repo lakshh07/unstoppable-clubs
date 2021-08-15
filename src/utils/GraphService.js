@@ -74,7 +74,7 @@ export default class GraphService {
 
     async fetchAllClubsOfMember  (memberAddress) {
         return await graphQLFetcher({
-          query: `
+          query: ` {
             posts(first: 25, where:{lock: {id: ""}}) {
               id
               sender
@@ -82,6 +82,7 @@ export default class GraphService {
               filepath
               createdAt
             }
+          }
           `
         }).then((data) => {
           return data.data.posts;
@@ -94,8 +95,16 @@ export default class GraphService {
         pubkey: "vb+Wj1tgO7l4wDHI6XOllO/XEhdy7KqsmR7MjitXxX8="
       }]
     }
-    
-    
-      
+
+    async fetchPostsForClub(clubAddress) {
+      return [
+        {
+          id: "",
+          filepath: "BEST CLUB/test1.png_md",
+          description: "Test File"
+        }
+      ]
+    }
+          
 
 }
