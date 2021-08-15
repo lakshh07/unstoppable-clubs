@@ -105,7 +105,7 @@ function UserCard({
               </Link>
             </Route>
           </Stack>
-          <Route exact path="/">
+          <Route exact path={["/", "/allclubs"]}>
             <Icon
               as={Arrow}
               color="gray.600"

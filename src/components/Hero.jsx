@@ -17,6 +17,7 @@ import {
   Text,
   Container,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import svgAvatarGenerator from "../utils/avatar";
 import {
@@ -30,7 +31,7 @@ import {
 import image from "../images/20945479.jpg";
 import ClubCard from "./Usercard";
 import CreateUser from "./CreateClub";
-import  {getPubKeyFromMetamask} from '../utils/utils';
+import { getPubKeyFromMetamask } from "../utils/utils";
 
 const fetchAccountClub = (a) => {
   return {
@@ -42,8 +43,10 @@ export default function Hero({ currentAccount, clubService, graphService }) {
   const [avatar, setAvatar] = useState(undefined);
   const [accountClub, setAccountClub] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [allClubs, setClubs ] = useState([]);
-  const [subClubSet, setSubClubs ] = useState([]);
+  const [allClubs, setClubs] = useState([]);
+  const [subClubSet, setSubClubs] = useState([]);
+  const [transHash, setTransHash] = useState();
+  const toast = useToast();
 
   useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
@@ -51,15 +54,14 @@ export default function Hero({ currentAccount, clubService, graphService }) {
     let aClub = fetchAccountClub(currentAccount);
     setAccountClub(aClub);
     let subscribedClubs = await graphService.fetchClubsOfMember(currentAccount);
-    setSubClubs(new Set(subscribedClubs.map(c => c.address)));
+    setSubClubs(new Set(subscribedClubs.map((c) => c.address)));
   }, [currentAccount]);
 
   useEffect(async () => {
-    
-   let clubs = await graphService.fetchClubs();
-   setClubs(clubs);
-   console.log('GRAPHT SERVICE CALLED WITH RESULT', clubs);
-  }, [])
+    let clubs = await graphService.fetchClubs();
+    setClubs(clubs);
+    console.log("GRAPHT SERVICE CALLED WITH RESULT", clubs);
+  }, []);
 
   const Feature = ({ icon, title, text }) => {
     return (
@@ -260,12 +262,43 @@ export default function Hero({ currentAccount, clubService, graphService }) {
           </Heading>
           <Flex justify-content="center" mr="10px">
             <div className="cards">
-              { 
-              allClubs.filter(c => !subClubSet.has(c.address)).map((club) => <ClubCard clubName={club.name} lockAddress={club.address} clubPrice={club.price} totalMembership={"100"} subscribeToClub={async () => {
-                let pubkey = await getPubKeyFromMetamask();
-                clubService.subscribeToClub(club.address, pubkey);
-              }}></ClubCard>) 
-              }
+              {allClubs
+                .filter((c) => !subClubSet.has(c.address))
+                .map((club, index) => (
+                  <ClubCard
+                    key={index}
+                    clubName={club.name}
+                    lockAddress={club.address}
+                    clubPrice={club.price}
+                    totalMembership={"100"}
+                    subscribeToClub={async () => {
+                      let pubkey = await getPubKeyFromMetamask();
+                      const hash = clubService.subscribeToClub(
+                        club.address,
+                        pubkey
+                      );
+                      setTransHash(hash);
+                      console.log(transHash);
+                    }}
+                  ></ClubCard>
+                ))}
+              {/* {transHash === undefined
+                ? toast({
+                    position: "top-right",
+                    title: `Transaction Failed`,
+                    description: `Can't subscribe your club`,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  })
+                : toast({
+                    position: "top-right",
+                    title: `Subscribed Successfully`,
+                    description: `Transaction Hash : ${transHash}`,
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                  })} */}
             </div>
           </Flex>
         </Box>

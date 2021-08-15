@@ -26,10 +26,14 @@ import Usercard from "./Usercard";
 import Files from "./Files";
 import CreateFile from "./Createfile";
 import CreateClub from "./CreateClub";
-import { encryptBuffer, hexToBytes, bytesToHex, createDocFromMembersList, decryptUsingMetamask } from '../utils/utils';
+import {
+  encryptBuffer,
+  hexToBytes,
+  bytesToHex,
+  createDocFromMembersList,
+  decryptUsingMetamask,
+} from "../utils/utils";
 import GraphiQL from "graphiql";
-
-
 
 export default function Dashboard({
   currentAccount,
@@ -43,83 +47,108 @@ export default function Dashboard({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [avatar, setAvatar] = useState(undefined);
-  const [showCC, setShowCC ] = useState(false);
-  const [clubPosts, setClubPosts ] = useState([]);
-  const [allClubs, setAllClubs ] = useState([]);
+  const [showCC, setShowCC] = useState(false);
+  const [clubPosts, setClubPosts] = useState([]);
+  const [allClubs, setAllClubs] = useState([]);
   let { user } = useParams();
 
   useEffect(async () => {
     let svg = svgAvatarGenerator(currentAccount, { dataUri: true });
     setAvatar(svg);
   }, [currentAccount, user]);
-
+  console.log(graphService);
   useEffect(async () => {
-    if(clubAddress) {
-       const clubp = await graphService.fetchPostsForClub(clubAddress);
-       setClubPosts(clubp);
+    if (clubAddress) {
+      const clubp = await graphService.fetchPostsForClub(clubAddress);
+      setClubPosts(clubp);
     }
-  }, [clubAddress])
+  }, [clubAddress]);
 
   useEffect(async () => {
-      const clubs = await graphService.fetchAllClubsOfMember(currentAccount);
-      setAllClubs(clubs);
+    const clubs = await graphService.fetchAllClubsOfMember(currentAccount);
+    setAllClubs(clubs);
   }, [currentAccount]);
 
   const onCreateClub = async (memberPriceInEth, clubName, totalMembers) => {
-    const lockAddress = await clubService.createClub(memberPriceInEth, clubName, totalMembers);
+    const lockAddress = await clubService.createClub(
+      memberPriceInEth,
+      clubName,
+      totalMembers
+    );
     return lockAddress;
-  }
+  };
 
   const publishPostFlow = async (fileObject, fileName) => {
     const fileBuffer = await fileObject.arrayBuffer();
     const encryptedBuffer = await encryptBuffer(fileBuffer);
-    
-    const uploadedStatus  = await textileService.uploadToTextile(encryptedBuffer.encryptedData,`${clubName}/${fileName}`);
+
+    const uploadedStatus = await textileService.uploadToTextile(
+      encryptedBuffer.encryptedData,
+      `${clubName}/${fileName}`
+    );
     const members = await graphService.fetchMembersOfClub(clubAddress);
-    console.log('UPLOADED TO TEXTIE', uploadedStatus);
-    const arrayBuffer = await crypto.subtle.exportKey("raw",encryptedBuffer.encryptionKey);
+    console.log("UPLOADED TO TEXTIE", uploadedStatus);
+    const arrayBuffer = await crypto.subtle.exportKey(
+      "raw",
+      encryptedBuffer.encryptionKey
+    );
     const ekeyhex = bytesToHex(new Uint8Array(arrayBuffer));
-    
+
     const jsonDoc = createDocFromMembersList(members, ekeyhex);
-    jsonDoc['iv'] = encryptedBuffer.iv;
+    jsonDoc["iv"] = encryptedBuffer.iv;
     console.log("MATCH HEX", encryptedBuffer.iv);
-    jsonDoc['filePath'] = `${clubName}/${fileName}`
+    jsonDoc["filePath"] = `${clubName}/${fileName}`;
     const jsonDocPath = `${clubName}/${fileName}_md`;
     const finalPath = await textileService.uploadJson(jsonDoc, jsonDocPath);
-    console.log('JSON FILE UPLOAED ', finalPath);
-    const postId = await clubService.publishOnChain(clubAddress, fileName, jsonDocPath);
+    console.log("JSON FILE UPLOAED ", finalPath);
+    const postId = await clubService.publishOnChain(
+      clubAddress,
+      fileName,
+      jsonDocPath
+    );
     return postId;
-  }
+  };
 
   const fetchPostFlow = async (jsonDocPath) => {
-
-    const jsonDocStr = await textileService.fetchPathFromTextile(jsonDocPath)
+    const jsonDocStr = await textileService.fetchPathFromTextile(jsonDocPath);
     const jsonDoc = JSON.parse(jsonDocStr);
-    if(!jsonDoc['memberAccess'][currentAccount])  {
-      alert('YOU ARE NOT A MEMBER');
+    if (!jsonDoc["memberAccess"][currentAccount]) {
+      alert("YOU ARE NOT A MEMBER");
       return false;
     }
-    console.log('JSON RECOVERED',jsonDoc);
-    const strToDecrypt = jsonDoc['memberAccess'][currentAccount];
+    console.log("JSON RECOVERED", jsonDoc);
+    const strToDecrypt = jsonDoc["memberAccess"][currentAccount];
     const encryptionKeyHex = await decryptUsingMetamask(strToDecrypt);
     let decryptionKey = new Uint8Array(hexToBytes(encryptionKeyHex)).buffer;
-    decryptionKey = await crypto.subtle.importKey('raw', decryptionKey, { 'name': 'AES-CBC', 'length': 256 }, true, ['encrypt', 'decrypt']);
-    let filesInIPFS = await textileService.fetchPathFromTextile(jsonDoc.filePath, false);
+    decryptionKey = await crypto.subtle.importKey(
+      "raw",
+      decryptionKey,
+      { name: "AES-CBC", length: 256 },
+      true,
+      ["encrypt", "decrypt"]
+    );
+    let filesInIPFS = await textileService.fetchPathFromTextile(
+      jsonDoc.filePath,
+      false
+    );
     let fileInIPFS = filesInIPFS;
-    let ivarr = []
-    for(let i of Object.keys(jsonDoc.iv)){ 
-      ivarr[i] = jsonDoc.iv[i]
+    let ivarr = [];
+    for (let i of Object.keys(jsonDoc.iv)) {
+      ivarr[i] = jsonDoc.iv[i];
     }
     const iv = new Uint8Array(ivarr);
-    const fileAsBuffer = await crypto.subtle.decrypt({
-      name: "AES-CBC",
-      length: 256,
-      iv: iv
-    }, decryptionKey, fileInIPFS);
-    
+    const fileAsBuffer = await crypto.subtle.decrypt(
+      {
+        name: "AES-CBC",
+        length: 256,
+        iv: iv,
+      },
+      decryptionKey,
+      fileInIPFS
+    );
+
     return fileAsBuffer;
-    
-  }
+  };
 
   return (
     <Flex
@@ -263,7 +292,18 @@ export default function Dashboard({
         <Flex p="0 5px" alignItems="center" justifyContent="space-between">
           <Heading fontWeight="normal" mb={4} letterSpacing="tight">
             <Route exact path="/dashboard">
-              {clubName} -  {clubAddress}
+              {clubName}{" "}
+              <Tag
+                size="lg"
+                mt={[1, 1, 2, 2]}
+                ml={2}
+                p={2}
+                rounded={10}
+                textAlign="center"
+                background="hsla(262, 98%, 62%, 0.3)"
+              >
+                <TagLabel color="black"> {clubAddress}</TagLabel>
+              </Tag>
             </Route>
             <Route exact path="/clubs">
               Your Clubs
@@ -285,6 +325,7 @@ export default function Dashboard({
                     key={index}
                     clubName={list.name}
                     clubPrice={list.price}
+                    totalMembership={"100"}
                   />
                 );
               })}
@@ -325,12 +366,20 @@ export default function Dashboard({
             onClose={() => { setShowCC(false);}}
            ></CreateClub>
 
+
             {clubPosts.length > 0 ? (
               <div className="cards">
                 {/* {map with array of clubs of members with props} */}
-                {clubPosts.map((cp) => <Files key={cp.filepath} fileName={cp.filepath} filePath={cp.filepath} decryptFile={async () => {
-                   return await fetchPostFlow(cp.filepath);
-                }}/>)}
+                {clubPosts.map((cp) => (
+                  <Files
+                    key={cp.filepath}
+                    fileName={cp.filepath}
+                    filePath={cp.filepath}
+                    decryptFile={async () => {
+                      return await fetchPostFlow(cp.filepath);
+                    }}
+                  />
+                ))}
               </div>
             ) : (
               <Flex
