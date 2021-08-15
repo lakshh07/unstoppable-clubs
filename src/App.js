@@ -24,7 +24,6 @@ const getMetamaskProvider = async () => {
   } else {
     return null;
   }
-
 };
 const gService = new GraphService();
 
@@ -39,7 +38,6 @@ function App() {
   // const [gService, setgService] = useState();
   const [textileService, setTextileService] = useState();
   const [ownedClub, setOwnedClub] = useState({});
-  
 
   const getCurrentAccount = async () => {
     const accounts = await window.ethereum.request({
@@ -73,7 +71,6 @@ function App() {
         window.location.reload();
       });
     }
-
   }, [currentAccount]);
 
   useEffect(async () => {
